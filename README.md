@@ -2,6 +2,33 @@
 
 This repository contains Python scripts for analyzing game comments from various sources (YouTube, Twitch, etc.) using AI-powered sentiment analysis and classification.
 
+## Example Output
+
+### Card System Analysis Dashboard
+See `example_dashboard.html` for a sample card system analysis dashboard with English text. This demonstrates:
+- Interactive statistics cards
+- Visual charts showing sentiment distribution by playtime segments
+- Detailed main points with supporting comments
+- Organized by playtime segments (Early, Mid, Late, Veteran)
+
+The dashboard uses sample data from `example_data.json` to show the expected output format.
+
+### YouTube Insights Dashboard
+See `example_insights_dashboard.html` for a sample YouTube insights dashboard (matching the style of `generate_insights_webpage.py`). This demonstrates:
+- Interactive filtering by Theme, Sentiment, and Priority
+- Bar chart showing sentiment distribution by theme
+- Two tabs: "Key Insights" and "Priority Themes"
+- Insight cards with badges (module, sentiment, importance)
+- Supporting comments for each insight
+- Real-time filter updates
+
+![Insights Dashboard Screenshot](example.png)
+
+*Example dashboard showing interactive filters, statistics, and key insights with supporting comments*
+
+The dashboard uses sample data from `example_insights_data.json` to show the expected output format.
+
+
 ## Scripts Overview
 
 ### 1. `analyze_card_text_ai.py`
@@ -154,31 +181,6 @@ Contributions are welcome! Please see [CONTRIBUTING.md](CONTRIBUTING.md) for gui
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
-## Example Output
-
-### Card System Analysis Dashboard
-See `example_dashboard.html` for a sample card system analysis dashboard with English text. This demonstrates:
-- Interactive statistics cards
-- Visual charts showing sentiment distribution by playtime segments
-- Detailed main points with supporting comments
-- Organized by playtime segments (Early, Mid, Late, Veteran)
-
-The dashboard uses sample data from `example_data.json` to show the expected output format.
-
-### YouTube Insights Dashboard
-See `example_insights_dashboard.html` for a sample YouTube insights dashboard (matching the style of `generate_insights_webpage.py`). This demonstrates:
-- Interactive filtering by Theme, Sentiment, and Priority
-- Bar chart showing sentiment distribution by theme
-- Two tabs: "Key Insights" and "Priority Themes"
-- Insight cards with badges (module, sentiment, importance)
-- Supporting comments for each insight
-- Real-time filter updates
-
-![Insights Dashboard Screenshot](example.png)
-
-*Example dashboard showing interactive filters, statistics, and key insights with supporting comments*
-
-The dashboard uses sample data from `example_insights_data.json` to show the expected output format.
 
 ## Changelog
 
