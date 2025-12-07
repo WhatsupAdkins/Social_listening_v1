@@ -4,6 +4,15 @@ This repository contains Python scripts for analyzing social media comments from
 
 ## Example Output
 
+### Card System Analysis Dashboard
+See `examples/example_dashboard.html` for a sample card system analysis dashboard with English text. This demonstrates:
+- Interactive statistics cards
+- Visual charts showing sentiment distribution by playtime segments
+- Detailed main points with supporting comments
+- Organized by playtime segments (Early, Mid, Late, Veteran)
+
+The dashboard uses sample data from `examples/example_data.json` to show the expected output format.
+
 ### YouTube Insights Dashboard
 See `examples/example_insights_dashboard.html` for a sample YouTube insights dashboard (matching the style of `src/generate_insights_webpage.py`). This demonstrates:
 - Interactive filtering by Theme, Sentiment, and Priority
@@ -19,9 +28,10 @@ See `examples/example_insights_dashboard.html` for a sample YouTube insights das
 
 The dashboard uses sample data from `examples/example_insights_data.json` to show the expected output format.
 
-## Changelog
-
-See [docs/CHANGELOG.md](docs/CHANGELOG.md) for a list of changes and version history.
+### Real Dashboard Examples
+Check out `examples/dashboards/` for real dashboard outputs:
+- `S3PVE_insights_11.10.html` - PVE mode insights analysis
+- `card_system_evaluation_20251205_192807.html` - Card system evaluation dashboard
 
 ## Project Structure
 
@@ -35,6 +45,9 @@ See [docs/CHANGELOG.md](docs/CHANGELOG.md) for a list of changes and version his
 │   ├── twitch_sentiment.py
 │   ├── rag_knowledge.py
 │   └── rag_knowledge_enhanced.py
+├── data/                  # Sample datasets
+│   ├── fragpunk_steam_reviews_20251201_202726.csv
+│   └── youtube_comments_processed_20251110_105015.csv
 ├── examples/               # Example dashboards and sample data
 │   ├── example_dashboard.html
 │   ├── example_insights_dashboard.html
@@ -207,4 +220,10 @@ Contributions are welcome! Please see [docs/CONTRIBUTING.md](docs/CONTRIBUTING.m
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE) file for details.
 
+<<<<<<< HEAD
+=======
+## Changelog
+
+See [docs/CHANGELOG.md](docs/CHANGELOG.md) for a list of changes and version history.
+>>>>>>> 25a53cb (Add data folder and reorganize README: move Example Output section to top)
 
