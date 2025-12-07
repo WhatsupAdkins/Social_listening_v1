@@ -19,7 +19,9 @@ This repository contains Python scripts for analyzing game comments from various
 │   ├── example_insights_dashboard.html
 │   ├── example_data.json
 │   ├── example_insights_data.json
-│   └── example.png
+│   ├── example.png
+│   ├── S3PVE_insights_11.10.html
+│   └── card_system_evaluation_20251205_192807.html
 ├── docs/                  # Documentation
 │   ├── CHANGELOG.md
 │   ├── CONTRIBUTING.md
