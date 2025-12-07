@@ -1,6 +1,6 @@
-# Game Comment Analysis Scripts
+# AI Powered Social Listening Program
 
-This repository contains Python scripts for analyzing game comments from various sources (YouTube, Twitch, etc.) using AI-powered sentiment analysis and classification.
+This repository contains Python scripts for analyzing social media comments from various sources (YouTube, Twitch, etc.) using AI-powered sentiment analysis and classification.
 
 ## Project Structure
 
