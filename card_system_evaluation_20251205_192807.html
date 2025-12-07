@@ -1,0 +1,1222 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>卡牌系统评价仪表板</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1600px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+        
+        .stat-card {
+            background: #f8f9fa;
+            padding: 20px;
+            border-radius: 12px;
+            text-align: center;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+            margin-top: 5px;
+        }
+        
+        .points-section {
+            margin-top: 40px;
+        }
+        
+        .category-section {
+            margin-bottom: 40px;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 12px;
+        }
+        
+        .category-section h3 {
+            color: #667eea;
+            font-size: 1.5em;
+            margin-bottom: 20px;
+            border-bottom: 2px solid #667eea;
+            padding-bottom: 10px;
+        }
+        
+        .point-item {
+            margin-bottom: 25px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border-left: 4px solid #667eea;
+        }
+        
+        .point-header {
+            display: flex;
+            align-items: flex-start;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+        
+        .point-number {
+            font-weight: bold;
+            color: #667eea;
+            min-width: 25px;
+        }
+        
+        .point-text {
+            flex: 1;
+            font-size: 1.1em;
+            line-height: 1.5;
+        }
+        
+        .point-volume {
+            background: #667eea;
+            color: white;
+            padding: 4px 12px;
+            border-radius: 12px;
+            font-size: 0.9em;
+            white-space: nowrap;
+        }
+        
+        .backup-comments {
+            margin-top: 15px;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+        
+        .backup-comments strong {
+            color: #495057;
+            display: block;
+            margin-bottom: 10px;
+        }
+        
+        .backup-comments ul {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+        }
+        
+        .backup-comments li {
+            padding: 8px 0;
+            border-bottom: 1px solid #dee2e6;
+            color: #495057;
+            line-height: 1.6;
+        }
+        
+        .backup-comments li:last-child {
+            border-bottom: none;
+        }
+        
+        .backup-comments li::before {
+            content: "💬 ";
+            margin-right: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>🎴 卡牌系统评价仪表板</h1>
+            <p>按游玩时间段分类的卡牌系统反馈分析</p>
+        </div>
+        
+        <div class="content">
+            <div class="stats-grid">
+
+                <div class="stat-card">
+                    <div class="stat-value">4,746</div>
+                    <div class="stat-label">总评论数</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">2,638</div>
+                    <div class="stat-label">卡牌正面</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">1,330</div>
+                    <div class="stat-label">卡牌负面</div>
+                </div>
+                <div class="stat-card">
+                    <div class="stat-value">66.5%</div>
+                    <div class="stat-label">正面率</div>
+                </div>
+            </div>
+            
+            <div id="chart-container">
+                <html>
+<head><meta charset="utf-8" /></head>
+<body>
+    <div>                        <script type="text/javascript">window.PlotlyConfig = {MathJaxConfig: 'local'};</script>
+        <script charset="utf-8" src="https://cdn.plot.ly/plotly-3.3.0.min.js" integrity="sha256-bO3dS6yCpk9aK4gUpNELtCiDeSYvGYnK7jFI58NQnHI=" crossorigin="anonymous"></script>                <div id="card_evaluation_chart" class="plotly-graph-div" style="height:600px; width:100%;"></div>            <script type="text/javascript">                window.PLOTLYENV=window.PLOTLYENV || {};                                if (document.getElementById("card_evaluation_chart")) {                    Plotly.newPlot(                        "card_evaluation_chart",                        [{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e\u6b63\u9762: %{y}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#90EE90"},"name":"\u6b63\u9762","x":["\u65e9\u671f (0-2\u5c0f\u65f6)","\u4e2d\u671f (2-10\u5c0f\u65f6)","\u540e\u671f (10-50\u5c0f\u65f6)","\u8d44\u6df1 (50\u5c0f\u65f6+)"],"y":[332,938,965,403],"type":"bar","xaxis":"x","yaxis":"y"},{"hovertemplate":"\u003cb\u003e%{x}\u003c\u002fb\u003e\u003cbr\u003e\u8d1f\u9762: %{y}\u003cextra\u003e\u003c\u002fextra\u003e","marker":{"color":"#e74c3c"},"name":"\u8d1f\u9762","x":["\u65e9\u671f (0-2\u5c0f\u65f6)","\u4e2d\u671f (2-10\u5c0f\u65f6)","\u540e\u671f (10-50\u5c0f\u65f6)","\u8d44\u6df1 (50\u5c0f\u65f6+)"],"y":[389,436,363,142],"type":"bar","xaxis":"x","yaxis":"y"}],                        {"template":{"data":{"histogram2dcontour":[{"type":"histogram2dcontour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"choropleth":[{"type":"choropleth","colorbar":{"outlinewidth":0,"ticks":""}}],"histogram2d":[{"type":"histogram2d","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"heatmap":[{"type":"heatmap","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"contourcarpet":[{"type":"contourcarpet","colorbar":{"outlinewidth":0,"ticks":""}}],"contour":[{"type":"contour","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"surface":[{"type":"surface","colorbar":{"outlinewidth":0,"ticks":""},"colorscale":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]]}],"mesh3d":[{"type":"mesh3d","colorbar":{"outlinewidth":0,"ticks":""}}],"scatter":[{"fillpattern":{"fillmode":"overlay","size":10,"solidity":0.2},"type":"scatter"}],"parcoords":[{"type":"parcoords","line":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolargl":[{"type":"scatterpolargl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"bar":[{"error_x":{"color":"#2a3f5f"},"error_y":{"color":"#2a3f5f"},"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"bar"}],"scattergeo":[{"type":"scattergeo","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterpolar":[{"type":"scatterpolar","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"histogram":[{"marker":{"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"histogram"}],"scattergl":[{"type":"scattergl","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatter3d":[{"type":"scatter3d","line":{"colorbar":{"outlinewidth":0,"ticks":""}},"marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermap":[{"type":"scattermap","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattermapbox":[{"type":"scattermapbox","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scatterternary":[{"type":"scatterternary","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"scattercarpet":[{"type":"scattercarpet","marker":{"colorbar":{"outlinewidth":0,"ticks":""}}}],"carpet":[{"aaxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"baxis":{"endlinecolor":"#2a3f5f","gridcolor":"white","linecolor":"white","minorgridcolor":"white","startlinecolor":"#2a3f5f"},"type":"carpet"}],"table":[{"cells":{"fill":{"color":"#EBF0F8"},"line":{"color":"white"}},"header":{"fill":{"color":"#C8D4E3"},"line":{"color":"white"}},"type":"table"}],"barpolar":[{"marker":{"line":{"color":"#E5ECF6","width":0.5},"pattern":{"fillmode":"overlay","size":10,"solidity":0.2}},"type":"barpolar"}],"pie":[{"automargin":true,"type":"pie"}]},"layout":{"autotypenumbers":"strict","colorway":["#636efa","#EF553B","#00cc96","#ab63fa","#FFA15A","#19d3f3","#FF6692","#B6E880","#FF97FF","#FECB52"],"font":{"color":"#2a3f5f"},"hovermode":"closest","hoverlabel":{"align":"left"},"paper_bgcolor":"white","plot_bgcolor":"#E5ECF6","polar":{"bgcolor":"#E5ECF6","angularaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"radialaxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"ternary":{"bgcolor":"#E5ECF6","aaxis":{"gridcolor":"white","linecolor":"white","ticks":""},"baxis":{"gridcolor":"white","linecolor":"white","ticks":""},"caxis":{"gridcolor":"white","linecolor":"white","ticks":""}},"coloraxis":{"colorbar":{"outlinewidth":0,"ticks":""}},"colorscale":{"sequential":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"sequentialminus":[[0.0,"#0d0887"],[0.1111111111111111,"#46039f"],[0.2222222222222222,"#7201a8"],[0.3333333333333333,"#9c179e"],[0.4444444444444444,"#bd3786"],[0.5555555555555556,"#d8576b"],[0.6666666666666666,"#ed7953"],[0.7777777777777778,"#fb9f3a"],[0.8888888888888888,"#fdca26"],[1.0,"#f0f921"]],"diverging":[[0,"#8e0152"],[0.1,"#c51b7d"],[0.2,"#de77ae"],[0.3,"#f1b6da"],[0.4,"#fde0ef"],[0.5,"#f7f7f7"],[0.6,"#e6f5d0"],[0.7,"#b8e186"],[0.8,"#7fbc41"],[0.9,"#4d9221"],[1,"#276419"]]},"xaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"yaxis":{"gridcolor":"white","linecolor":"white","ticks":"","title":{"standoff":15},"zerolinecolor":"white","automargin":true,"zerolinewidth":2},"scene":{"xaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"yaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2},"zaxis":{"backgroundcolor":"#E5ECF6","gridcolor":"white","linecolor":"white","showbackground":true,"ticks":"","zerolinecolor":"white","gridwidth":2}},"shapedefaults":{"line":{"color":"#2a3f5f"}},"annotationdefaults":{"arrowcolor":"#2a3f5f","arrowhead":0,"arrowwidth":1},"geo":{"bgcolor":"white","landcolor":"#E5ECF6","subunitcolor":"white","showland":true,"showlakes":true,"lakecolor":"white"},"title":{"x":0.05},"mapbox":{"style":"light"}}},"xaxis":{"anchor":"y","domain":[0.0,1.0],"title":{"text":"\u6e38\u73a9\u65f6\u95f4\u6bb5"}},"yaxis":{"anchor":"x","domain":[0.66,1.0],"title":{"text":"\u8bc4\u8bba\u6570\u91cf"}},"annotations":[{"font":{"size":16},"showarrow":false,"text":"\u5361\u724c\u7cfb\u7edf\u60c5\u611f\u5206\u5e03","x":0.5,"xanchor":"center","xref":"paper","y":1.0,"yanchor":"bottom","yref":"paper"},{"font":{"size":16},"showarrow":false,"text":"\u6309\u6e38\u73a9\u65f6\u95f4\u6bb5\u7684\u4e3b\u8981\u89c2\u70b9","x":0.5,"xanchor":"center","xref":"paper","y":0.51,"yanchor":"bottom","yref":"paper"}],"title":{"font":{"size":20},"text":"\u6309\u6e38\u73a9\u65f6\u95f4\u6bb5\u5206\u7c7b\u7684\u5361\u724c\u7cfb\u7edf\u8bc4\u4ef7","x":0.5,"xanchor":"center"},"margin":{"t":80,"b":50,"l":50,"r":50},"height":600,"showlegend":true,"barmode":"group"},                        {"responsive": true}                    )                };            </script>        </div>
+</body>
+</html>
+            </div>
+            
+            <div class="points-section">
+                <h2 style="color: #667eea; margin-bottom: 30px; font-size: 1.8em;">📊 主要观点详情</h2>
+                
+            <div class="category-section">
+                <h3>早期 (0-2小时)</h3>
+            
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">1.</span>
+                        <span class="point-text">卡牌系统增加了游戏的多样性和新鲜感</span>
+                        <span class="point-volume">提及体量: 45条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Fragpunk has a fun card system which I think is a really nice game mechanic to make the gameplay more interesting</li><li>sistema de cartas que cambia las reglas en cada ronda, lo que hace que cada partida se sienta única.</li><li>就是多了卡片這個可以用的隨機buff</li><li>优点是首创卡片加成模式，随机性增强</li><li>Die Karten sind Super verwirrend sorgen aber für Abwechslung in jeder Runde.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">2.</span>
+                        <span class="point-text">卡牌机制是游戏最具创新性和独特性的核心玩法</span>
+                        <span class="point-volume">提及体量: 63条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>the card system is a cool idea</li><li>The card system is the only unique quality about this game nothing else is original.</li><li>Shard Cards are a cool idea.</li><li>The shard cards make it different from other hero shoters.</li><li>优点是首创卡片加成模式，随机性增强</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">3.</span>
+                        <span class="point-text">卡牌能够改变游戏规则和战斗方式</span>
+                        <span class="point-volume">提及体量: 35条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>sistema de cartas que cambia las reglas en cada ronda, lo que hace que cada partida se sienta única.</li><li>人物、技能、卡牌的设计有比较有意思。各种卡片特色blend in了很多意想不到的对局体验，简化了传统类似GO和瓦的经济系统</li><li>For instance, the cards every round offer refreshing new ways to play each round, and offer bonuses that can change the way your team approaches fights. These cards can range from useless to game breaking, with effects such as &quot;Your opponents cannot crouch or jump&quot;, up to &quot;all of your gun ammunition is in one magazine.&quot;</li><li>chaque partie est unique grâce aux Cartes d&#x27;éclats. Ces cartes permettent de modifier les règles du combat, ajoutant une dimension stratégique et imprévisible qui renouvelle constamment l&#x27;expérience de jeu.</li><li>you use your cards that gives you ability or some sort of advantages that&#x27;ll stop sweaty player to kill you with 1 shot or literally turning the gameplay around.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">4.</span>
+                        <span class="point-text">卡牌系统增加了策略深度和战术选择</span>
+                        <span class="point-volume">提及体量: 29条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>her tur farklı strateji gerekli, oynadıkça kartları vs. kavradığınız bir oyun</li><li>总体来说创意性很不错，但为了面向游戏用户很明显打磨化繁为简的工作还做的不到位。不知道开发组有没有考虑过，以英雄为单位，绑定卡组到英雄身上，做一个类似天赋系统、符文系统的通用卡、以地图为单位设置卡组、以攻防双方身份设计卡组等方式来提高卡牌内容可控性。也可以研究让英雄的技能也能作为卡牌技能的生效点。</li><li>For instance, the cards every round offer refreshing new ways to play each round, and offer bonuses that can change the way your team approaches fights. These cards can range from useless to game breaking, with effects such as &quot;Your opponents cannot crouch or jump&quot;, up to &quot;all of your gun ammunition is in one magazine.&quot;</li><li>chaque partie est unique grâce aux Cartes d&#x27;éclats. Ces cartes permettent de modifier les règles du combat, ajoutant une dimension stratégique et imprévisible qui renouvelle constamment l&#x27;expérience de jeu.</li><li>Kartlar ise daha da çeşitlendirilmiş gerçekten oyuna etki ediyor, bazı kartlar sadece eklenmek için eklenmiş ama takımın insiyatifine kaldığı için çok önemli değil.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">5.</span>
+                        <span class="point-text">卡牌带来的随机性和混乱让游戏更有趣和娱乐性</span>
+                        <span class="point-volume">提及体量: 43条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Fragpunk has a fun card system which I think is a really nice game mechanic to make the gameplay more interesting</li><li>Shard Cards add chaos and creativity</li><li>Die Karten sind Super verwirrend sorgen aber für Abwechslung in jeder Runde.</li><li>Cards mechanic is fresh and fun</li><li>the cards can be fun</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">6.</span>
+                        <span class="point-text">卡牌系统能够平衡技术差距创造逆转机会</span>
+                        <span class="point-volume">提及体量: 4条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>you use your cards that gives you ability or some sort of advantages that&#x27;ll stop sweaty player to kill you with 1 shot or literally turning the gameplay around.</li><li>Le systeme de carte permet de rajouter du fun au détriment de l&#x27;équilibrage c&#x27;est vrai mais c&#x27;est tout le piment de l&#x27;aléatoire! cela permet d&#x27;avoir des retournement de situations vraiment surprenant si une équipe sait bien profiter des cartes que la chance lui offre! Evidemment si vous êtes très mauvais joueur vous allez passer un mauvais moment mais au contraire si vous apprenez a changer de stratégie face aux cartes ennemis, cela peut rendre le jeu vraiment intéressant.</li><li>Механика с картами смешная, частенько может перевернуть ситуацию с ног на голову.</li><li>The card system is quite funny in many aspects as it reminds me a lot of the pay-to-win card system that Star Wars Battlefront 2 (2017) had the one that was so bad and such a disgraceful monetisation that it even made international news on BBC, CNN, Fox News and many others. Only here FragPunk has taken that concept and made it fair and not based on a pay-to-win system. With the innovation being the card system that allows players to vote for mutators that will only apply for that round. After that round those go away and you get new mutators to vote for. Both teams get different ones to vote for and the ones on offer depend on what each player has. New cards are earned through gameplay so at least no pay-to-win there (at least as far as I understood it, again the microtransactions are hard to understand so it is possible you can buy cards with real money or card booster packs but I did not see it in any case)</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">7.</span>
+                        <span class="point-text">卡牌概念新颖且易于理解</span>
+                        <span class="point-volume">提及体量: 2条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>If you spend a little time learning each persons skills and just reading the cards its really easy.</li><li>The card system is quite funny in many aspects as it reminds me a lot of the pay-to-win card system that Star Wars Battlefront 2 (2017) had the one that was so bad and such a disgraceful monetisation that it even made international news on BBC, CNN, Fox News and many others. Only here FragPunk has taken that concept and made it fair and not based on a pay-to-win system. With the innovation being the card system that allows players to vote for mutators that will only apply for that round. After that round those go away and you get new mutators to vote for. Both teams get different ones to vote for and the ones on offer depend on what each player has. New cards are earned through gameplay so at least no pay-to-win there (at least as far as I understood it, again the microtransactions are hard to understand so it is possible you can buy cards with real money or card booster packs but I did not see it in any case)</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">8.</span>
+                        <span class="point-text">卡牌选择频繁打断游戏节奏，影响游戏连贯性</span>
+                        <span class="point-volume">提及体量: 28条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>kart seçiminde vs zorluk çıkarıyor</li><li>I personally didn&#x27;t enjoy the random cards. I felt it made the matches unpredictable, and difficult to follow. I&#x27;m a little confused trying to read all the cards, and remember why my primary isn&#x27;t an SMG, then it&#x27;s a sniper because a card is making me flip through primary weapons.</li><li>the mechanics with the cards are not a bad idea, but the matches are too short, you are watching some menu animation more often then you are in the game itself.</li><li>I liked the card concept but it just doesnt work well with the game in my opinion. The game barely bring anything new to the table. Its just another hero shooter but it lacks originality, or anything that would make you play this game for long. I mean, sure there is the card select thingy, wich is interesting but even that needs a lot of work.</li><li>The cards seem like a cool function, but matches are so fast that the perks are irrelevant.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">9.</span>
+                        <span class="point-text">卡牌平衡性极差，部分卡牌过于强势破坏公平性</span>
+                        <span class="point-volume">提及体量: 44条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>перед каждым раундом вам выдают случайные карты, меняющие правила игры. Карта &quot;Низкая гравитация&quot;: Вы как космонавт, а противники как куры, пытающиеся взлететь. Карта &quot;Только выстрелы в голову&quot;: Теперь каждое попадание, кроме хеда, вызывает у вашего персонажа приступ смеха. Карта &quot;Мины-липучки на всех&quot;: Каждый выстрел прилепляет мину к противнику. Баланс! Некоторые карты явно сильнее других, что может привести к обидным поражениям.</li><li>再加上一堆技能卡，根本没有平衡。技能卡刷出来还要看脸。</li><li>Баланса в игре не нашел. Одна карта может отменить выбор карт противоположной команды, а другая позволяет поставить бомбу где угодно на карте.</li><li>the cards are ment to bring some flavor to the game but int he end seem just to... unbalance it further</li><li>Card system is unique but can screw over a match (looking at you butter fingers)</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">10.</span>
+                        <span class="point-text">卡牌系统随机性过强，削弱技术竞技性</span>
+                        <span class="point-volume">提及体量: 39条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>перед каждым раундом вам выдают случайные карты, меняющие правила игры. Карта &quot;Низкая гравитация&quot;: Вы как космонавт, а противники как куры, пытающиеся взлететь. Карта &quot;Только выстрелы в голову&quot;: Теперь каждое попадание, кроме хеда, вызывает у вашего персонажа приступ смеха. Карта &quot;Мины-липучки на всех&quot;: Каждый выстрел прилепляет мину к противнику. Баланс! Некоторые карты явно сильнее других, что может привести к обидным поражениям.</li><li>mutators with random weapons and card mutators provided</li><li>le carte con effetti casuali (carine, ma comunque l&#x27;antitesi del competitivo)</li><li>再加上一堆技能卡，根本没有平衡。技能卡刷出来还要看脸。</li><li>the cards add a level of variance that removes the actual skill people use in most of these games, doesn&#x27;t make it any more fun</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">11.</span>
+                        <span class="point-text">新手学习曲线陡峭，卡牌数量多且效果复杂难懂</span>
+                        <span class="point-volume">提及体量: 22条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>I personally didn&#x27;t enjoy the random cards. I felt it made the matches unpredictable, and difficult to follow. I&#x27;m a little confused trying to read all the cards, and remember why my primary isn&#x27;t an SMG, then it&#x27;s a sniper because a card is making me flip through primary weapons.</li><li>it might take a bit to learn the card things</li><li>kart sisteminden bi B*k anlamıyoruz</li><li>having all those cards for a new player is so overwhelming, I just had no idea what they did and I really did not want to read through 200 different cards just to pick my favorite. i don&#x27;t even understand the use of them</li><li>入门就送技能卡，但是学习难度是否有点高？</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">12.</span>
+                        <span class="point-text">卡牌存在感不足或效果不明显</span>
+                        <span class="point-volume">提及体量: 51条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Das Konzept des Spiels mit den kartenbasierten Fähigkeitssystem hört sich auf den ersten Moment sehr interessant an. Es fühlt sich für mich aber sehr schwach und inkonsistent an.</li><li>技能卡无聊要死。玩法更是肉鸽恶心人那种。</li><li>The main point of the game is that at the beginning of the match you and your teammates choose cards. Said cards have special effects, like jump to regain health, or enemies drop gun after sustained fire. The Cards Idea has already been explored by a much much better indie dev studio. in this other game, each player has a set of cards, and can decide when to use them, some can effect teammates. The cards themselves are more fun, varied ideas instead of soulless boring &#x27;crouch to heal&#x27;.</li><li>barely noticed the cards doing anything really</li><li>-shard cards boring, unnecessary, isnt really making things more &quot;tactical&quot;</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">13.</span>
+                        <span class="point-text">卡牌系统只是噱头，无法掩盖核心玩法的平庸</span>
+                        <span class="point-volume">提及体量: 38条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Das Konzept des Spiels mit den kartenbasierten Fähigkeitssystem hört sich auf den ersten Moment sehr interessant an. Es fühlt sich für mich aber sehr schwach und inkonsistent an.</li><li>the card-based ability system comes across as a shallow gimmick</li><li>The card system is just chaos for chaos&#x27;s sake - random modifiers slapped on top of already incoherent mechanics. It&#x27;s not depth, it&#x27;s noise.</li><li>The card system is just a gimmick and the core gameplay is rather boring.</li><li>I liked the card concept but it just doesnt work well with the game in my opinion. The game barely bring anything new to the table. Its just another hero shooter but it lacks originality, or anything that would make you play this game for long. I mean, sure there is the card select thingy, wich is interesting but even that needs a lot of work.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">14.</span>
+                        <span class="point-text">卡牌机制与FPS核心玩法不协调，过于混乱</span>
+                        <span class="point-volume">提及体量: 24条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>The main point of the game is that at the beginning of the match you and your teammates choose cards. Said cards have special effects, like jump to regain health, or enemies drop gun after sustained fire. The Cards Idea has already been explored by a much much better indie dev studio. in this other game, each player has a set of cards, and can decide when to use them, some can effect teammates. The cards themselves are more fun, varied ideas instead of soulless boring &#x27;crouch to heal&#x27;.</li><li>The card system is just chaos for chaos&#x27;s sake - random modifiers slapped on top of already incoherent mechanics. It&#x27;s not depth, it&#x27;s noise.</li><li>고려해야 될 전술적 요소가 너무 많다. 샤드카드, 스킬, 총기 모두 고려해야 되는데 3가지가 잘 섞여 어울리는 느낌은 아님. 개인적으로 샤드카드로 차별화 할거였으면 스킬은 없었어야 한다고 본다.</li><li>Das Karten System ist in meinen Augen absolut unnötig und überkompliziert, wenn die Runde anfängt weiß ich schon gar nicht mehr was sich geändert hat und jede Runde eine stark einschneidende Veränderung ist einfach ein No Go. Dass man auf eine Bombsite Nebel erzeugen kann ist zwar eine geile Idee aber so wirklich den Gamechanger bringen kann es nicht, da man ja noch seine Sniper wechseln kann zum Rundenstart. Auch das dauerhafte durchlesen von irgendwelchen Karten vor jeder Runde ...</li><li>Card system seems interesting but the gameplay itself is very free to play, feels clunky and like it doesn&#x27;t know what it wants to do.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">15.</span>
+                        <span class="point-text">优势方卡牌更强形成滚雪球效应</span>
+                        <span class="point-volume">提及体量: 5条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>If you loose the first round you get less points to get cards and the enemies get better cards that almost guarantee 100% win chance, more shards to spend on more cards reducing the losing teams chance at recovery</li><li>The card system makes the winning team instantly overpowered for the duration of the game.</li><li>The card trick is cool, but you need a balance here, because the team that wins very often gets an even greater advantage.</li><li>the enemies team have best card but your team no.</li><li>碎片卡的灵感应该来自于Neon White，有很多有趣的碎片卡路人局没人会选，对局内的体验在机动性爆砍以后又变的十分枯燥，这个游戏有抽卡，一个月撑死30多抽，高级通行证18抽，而红皮大保底要500抽，生化模式真心远不如CF，没有终结者没有幽灵猎手，只有一个巨型傀儡而且后半才出，除了不断刷新买卡以外我想不出有什么创新点，这个卡一旦叠起来，后期感染者只要四五个一起冲一定就能赢</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                </div>
+            <div class="category-section">
+                <h3>中期 (2-10小时)</h3>
+            
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">1.</span>
+                        <span class="point-text">卡牌系统带来独特的游戏体验，每局都不同</span>
+                        <span class="point-volume">提及体量: 361条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Jede runde fühlt sich anders an durch die ShardCards</li><li>I think the ability cards are a cool idea and the randomness is interesting in matches.</li><li>The rule-breaking cards create hilarious, chaotic matches that are different every time.</li><li>карты в начале раундов прикольная тема</li><li>每局抽卡的玩法还挺新颖</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">2.</span>
+                        <span class="point-text">卡牌效果丰富多样且充满创意</span>
+                        <span class="point-volume">提及体量: 177条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>drug-addict mercenaries fight over their narcotic of choice, Glumite. It&#x27;s a reality-altering substance that&#x27;s shaped into cool-looking trading cards that they snap in half, to inhale the dust and shards inside I guess, and then mayhem ensues. Their heads get gigantic or tiny, doing squats heals them from grievous injuries, bullets turn into vampires, they carry around a protective turtle shell; you get the jist, the effects can be pretty weird. I saw many typos across the various cards and menus for the English version.</li><li>activas cartas que parecen diseñadas por un psicópata con acceso a cocaína y un mazo de Yu-Gi-Oh!; activas cartas que cambian las reglas a mitad del tiroteo; Fragpunk es lo que pasaría si Overwatch, Valorant y un mazo de cartas satánicas tuvieran un hijo hiperactivo</li><li>o sistema de Shard Cards. Essas cartas mudam as regras da partida em tempo real — desde efeitos engraçados, como aumentar a cabeça dos inimigos para facilitar headshots, até vantagens táticas, como reviver aliados. Isso dá um dinamismo enorme e faz cada rodada parecer única.</li><li>the cards that change the game rules is really creative.</li><li>Ce qui le rend vraiment spécial, ce sont les cartes de règles que tu peux activer à chaque manche, modifiant le gameplay de façon imprévisible et ultra fun — imagine faire grossir la tête de tes adversaires ou inverser la gravité en pleine partie.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">3.</span>
+                        <span class="point-text">卡牌系统增加了策略深度和战术性</span>
+                        <span class="point-volume">提及体量: 120条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Jogabilidade boa onde a habilidade e escolha de cartas contam mais do que a arma que vc usa.</li><li>if I catch them off guard with my character&#x27;s abilities or by using the card system, I can usually get enough of an upper hand that their better aim/reflexes/experience can&#x27;t outweigh the utility I&#x27;m using</li><li>its a bit like roguelike in a way that u can customize ur gameplay any way u want with the cards, for example getting hp for every time you jump or getting lifesteal every time you damage an enemy.</li><li>the games card mechanics are solid but unless you know how to set up your deck you wont be able to win</li><li>The card system is what really sets Fragpunk apart, though. I&#x27;ve never seen anything like it in another FPS. You can min-max your team&#x27;s resources, play strategically with your cards, or just save them up and let your raw gameplay carry you to victory.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">4.</span>
+                        <span class="point-text">卡牌机制创造混乱有趣的游戏氛围</span>
+                        <span class="point-volume">提及体量: 193条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Cards are a fun change to fps.</li><li>drug-addict mercenaries fight over their narcotic of choice, Glumite. It&#x27;s a reality-altering substance that&#x27;s shaped into cool-looking trading cards that they snap in half, to inhale the dust and shards inside I guess, and then mayhem ensues. Their heads get gigantic or tiny, doing squats heals them from grievous injuries, bullets turn into vampires, they carry around a protective turtle shell; you get the jist, the effects can be pretty weird. I saw many typos across the various cards and menus for the English version.</li><li>unique blend of tactical shooter elements with a chaotic, &quot;hero shooter&quot; style twist through its &quot;Shard Cards&quot;</li><li>I think the ability cards are a cool idea and the randomness is interesting in matches.</li><li>The rule-breaking cards create hilarious, chaotic matches that are different every time.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">5.</span>
+                        <span class="point-text">卡牌系统是FPS游戏的创新突破</span>
+                        <span class="point-volume">提及体量: 253条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Jogabilidade boa onde a habilidade e escolha de cartas contam mais do que a arma que vc usa.</li><li>unique blend of tactical shooter elements with a chaotic, &quot;hero shooter&quot; style twist through its &quot;Shard Cards&quot;</li><li>feels like if CSGO and valorant made a deckbuilder</li><li>activas cartas que parecen diseñadas por un psicópata con acceso a cocaína y un mazo de Yu-Gi-Oh!; activas cartas que cambian las reglas a mitad del tiroteo; Fragpunk es lo que pasaría si Overwatch, Valorant y un mazo de cartas satánicas tuvieran un hijo hiperactivo</li><li>the cards are an amazing touch</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">6.</span>
+                        <span class="point-text">卡牌可以改变局势平衡，给弱队翻盘机会</span>
+                        <span class="point-volume">提及体量: 27条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>if I catch them off guard with my character&#x27;s abilities or by using the card system, I can usually get enough of an upper hand that their better aim/reflexes/experience can&#x27;t outweigh the utility I&#x27;m using</li><li>Achei bem legal a dinâmica das cartas que da vantagem para os jogadores em certos rounds e isso muda a estrategia do jogo</li><li>карты реально полезны</li><li>i do like the card system and i think it gives a more fair chance to a worse team</li><li>les cartes permettent de retourner les situations si elles sont bien jouées</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">7.</span>
+                        <span class="point-text">团队投票和共同决策增强协作性</span>
+                        <span class="point-volume">提及体量: 33条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>see cards, get card where the louder your on vc the faster you run</li><li>L&#x27;élément distinctif de FragPunk réside dans son système de cartes Shard. Ces cartes, activées collectivement par l&#x27;équipe en dépensant des points, modifient les règles du jeu à chaque manche. Elles introduisent des effets variés, allant de l&#x27;ajout de capacités spéciales à des modifications environnementales, rendant chaque partie imprévisible et stratégique.</li><li>One of the features I found especially entertaining is the game mode where you start by selecting wildcards — these can either give your team special abilities or apply disadvantages to the enemy team.</li><li>Fragpunk a su se démarquer grâce aux cartes tirées au sort puis choisies par les équipes avant une manches.</li><li>Fragpunk essaie vraiment d&#x27;être à part grâce à sa mécanique de cartes qui change les règles à chaque Round, c&#x27;est vraiment marrant d&#x27;être &quot;Obligé&quot; de s&#x27;amuser parce que tout le monde à voté pour que le round se fasse uniquement au couteau, de pouvoir respirer parce que l&#x27;équipe a pris la carte qui atténue les dégâts à la tête, ou de juste faire des triks de fou parce que maintenant les doubles sauts sont actifs ou qu&#x27;il est maintenant possible de faire des super sauts !</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">8.</span>
+                        <span class="point-text">卡牌平衡性极差，部分卡牌过于强势</span>
+                        <span class="point-volume">提及体量: 68条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>il suo punto di forza che lo porta ad essere diverso dagli altri fps con la classica modalità bomba è la presenza delle cards che hanno il potere di cambiare le regole fisiche del gioco. Proprio per questo, le cards, il gunfight e tutto il resto rendono il gioco inizialmente &quot;divertente&quot;. Peccato che proprio per via di queste cards e delle abilità speciali di certi personaggi il gioco si presenta così sbilanciato che ad un certo punto hai la sensazione che in grosso modo la vittoria non sia stata opera tua ma piuttosto del caso. Ci sono cards che danno così tanto vantaggio che per quanto tu possa essere bravo non puoi farci niente e sei quasi destinato a perdere o peggio ci sono alcuni personaggi con abilità così sbroccate da essere ormai già dei meta da utilizzare soprattutto nelle competitive. le cards e le abilità mettono a dura prova la pazienza di un giocatore</li><li>The card system sucks some times you get weird af powers last match i played against someone with 1300 HP i was shooting him like a maniac he was still alive wth is that card buff.</li><li>the sword shield card is hella trash</li><li>some of the cards are really busted</li><li>так много類休闲以及破坏公平的卡牌. 经济系统改成了卡牌点数</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">9.</span>
+                        <span class="point-text">卡牌随机性破坏竞技体验</span>
+                        <span class="point-volume">提及体量: 60条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>il suo punto di forza che lo porta ad essere diverso dagli altri fps con la classica modalità bomba è la presenza delle cards che hanno il potere di cambiare le regole fisiche del gioco. Proprio per questo, le cards, il gunfight e tutto il resto rendono il gioco inizialmente &quot;divertente&quot;. Peccato che proprio per via di queste cards e delle abilità speciali di certi personaggi il gioco si presenta così sbilanciato che ad un certo punto hai la sensazione che in grosso modo la vittoria non sia stata opera tua ma piuttosto del caso. Ci sono cards che danno così tanto vantaggio che per quanto tu possa essere bravo non puoi farci niente e sei quasi destinato a perdere o peggio ci sono alcuni personaggi con abilità così sbroccate da essere ormai già dei meta da utilizzare soprattutto nelle competitive. le cards e le abilità mettono a dura prova la pazienza di un giocatore</li><li>The card system sucks some times you get weird af powers last match i played against someone with 1300 HP i was shooting him like a maniac he was still alive wth is that card buff.</li><li>карты звучат интересно, на деле чистейший хаос и снова дисбаланс</li><li>El castigo de la cartas, el sistema de cartas podría haber sido innovador con poco, pero resulta un verdadero suplicio. Desbloquearlas es tedioso, aprenderte todas es desmotivante y para colmo, hay tantos &#x27;masters&#x27; en cada partida que parece que el juego está diseñado para que NO quieras progresar, un horror. Quiero experimentar con cartas o personajes nuevos</li><li>It&#x27;s like part shooter game, part deckbuilder, and part casino.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">10.</span>
+                        <span class="point-text">卡牌数量过多且复杂，新手难以理解</span>
+                        <span class="point-volume">提及体量: 30条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Card voting process was too fast for me as a new player and overwhelming.</li><li>you have to learn all the skills of the Lancers and the additional Cards or at least kinda understand them</li><li>made the cards feel to gimmicky. Cards feel like they could be replaced with a lot of chance based things like a slot machine (ignoring age rating) or rolling dice? ( thats a maybe but it could work ) and thier effects just feel like scrapped abilities for charecters or random bonuses to stuff to fill the card count ( 172~ in first season and 212 in second wtf is there )</li><li>kartlarda sik gibi. 212 tane kart ne amk başta 30 tane getır</li><li>El castigo de la cartas, el sistema de cartas podría haber sido innovador con poco, pero resulta un verdadero suplicio. Desbloquearlas es tedioso, aprenderte todas es desmotivante y para colmo, hay tantos &#x27;masters&#x27; en cada partida que parece que el juego está diseñado para que NO quieras progresar, un horror. Quiero experimentar con cartas o personajes nuevos</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">11.</span>
+                        <span class="point-text">大多数卡牌效果平庸缺乏新意</span>
+                        <span class="point-volume">提及体量: 28条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>all those shard cards didnt add much to the game</li><li>While the concept of Shard Cards—round-modifying abilities—adds a unique twist, their implementation feels more gimmicky than strategic. Rounds are over too quickly for any meaningful planning, rendering these cards largely ineffective.</li><li>made the cards feel to gimmicky. Cards feel like they could be replaced with a lot of chance based things like a slot machine (ignoring age rating) or rolling dice? ( thats a maybe but it could work ) and thier effects just feel like scrapped abilities for charecters or random bonuses to stuff to fill the card count ( 172~ in first season and 212 in second wtf is there )</li><li>The shard cards don&#x27;t feel like they add anything and are kinda just an extra step except for certain cards</li><li>200 shard cards
+15 lancers, each with 3 unique abilities = 45 abilities
+That&#x27;s a total of 245 different abilities you&#x27;re expected to either learn or have some basic knowledge of from the beginning.
+
+Sure, these abilities may seem fun at first, but that novelty wears off fast. They begin to feel less like tools and more like noise. In many matches, they became annoying rather than engaging.
+
+If people complain that Spectre Divide has obscure and ambiguous mechanics, this game is on a whole other level.
+And keep in mind: this is just the start. As the game expands, you&#x27;ll have to deal with even more cards and abilities.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">12.</span>
+                        <span class="point-text">卡牌机制打断游戏节奏</span>
+                        <span class="point-volume">提及体量: 26条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>While the concept of Shard Cards—round-modifying abilities—adds a unique twist, their implementation feels more gimmicky than strategic. Rounds are over too quickly for any meaningful planning, rendering these cards largely ineffective.</li><li>got a few goofy ah card customs.. also can we auto select the RELICS so that no need manually have to pick all the time?????</li><li>Most &quot;abilities&quot; in Fragpunk would be ultimates in other games yet here, they&#x27;re spammed every 10 seconds. Imagine Valorant if Jett&#x27;s knives or Phoenix&#x27;s molly were basic abilities. Matches devolve into chaotic ability spam with no tactical depth.</li><li>la vera domanda cosa ha di diverso fragpunk? la risposta e&#x27; il sistema di carte random che durante la partita si possono selezionare cosi&#x27; da averte malus e bonus, tutte belle idee ma molto confuse, perche&#x27; rendono il gameplay confuso e i vari malus e buonus influenzano troppo la partita rendendo sbilanciate molti match.</li><li>the intent of the game is lost because almost nobody knows how to take two of their brain cells together to figure out what card combination is the best for the next round and because nobody wants to delegate these points to one person, the rest of the team has to deal with the shittiest cards known to man.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">13.</span>
+                        <span class="point-text">卡牌系统与竞技性冲突</span>
+                        <span class="point-volume">提及体量: 27条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>il suo punto di forza che lo porta ad essere diverso dagli altri fps con la classica modalità bomba è la presenza delle cards che hanno il potere di cambiare le regole fisiche del gioco. Proprio per questo, le cards, il gunfight e tutto il resto rendono il gioco inizialmente &quot;divertente&quot;. Peccato che proprio per via di queste cards e delle abilità speciali di certi personaggi il gioco si presenta così sbilanciato che ad un certo punto hai la sensazione che in grosso modo la vittoria non sia stata opera tua ma piuttosto del caso. Ci sono cards che danno così tanto vantaggio che per quanto tu possa essere bravo non puoi farci niente e sei quasi destinato a perdere o peggio ci sono alcuni personaggi con abilità così sbroccate da essere ormai già dei meta da utilizzare soprattutto nelle competitive. le cards e le abilità mettono a dura prova la pazienza di un giocatore</li><li>Most &quot;abilities&quot; in Fragpunk would be ultimates in other games yet here, they&#x27;re spammed every 10 seconds. Imagine Valorant if Jett&#x27;s knives or Phoenix&#x27;s molly were basic abilities. Matches devolve into chaotic ability spam with no tactical depth.</li><li>《界外狂潮》最引人注目的设计，莫过于其&quot;碎片卡&quot;系统。这一机制将传统FPS的战术博弈从枪法与走位的单一维度，拓展至&quot;改变规则&quot;的更高维度。游戏中的每一张碎片卡都是一种&quot;作弊代码&quot;，或强化己方、或削弱敌方，甚至直接修改战场规则。例如，&quot;大头&quot;卡能让敌方头部体积扩大，化身&quot;活靶子&quot;；&quot;白刃战&quot;卡则禁用所有枪械，强制玩家进入刀战肉搏。这种设计看似&quot;胡闹&quot;，实则构建了独特的策略深度。每回合开始前，双方需从随机卡池中抽取3张卡牌，并投入&quot;宝藏点数&quot;激活效果。由于卡牌效果透明但激活状态未知，玩家需在资源分配与心理博弈间权衡——是孤注一掷激活强力卡牌，还是虚张声势保留点数？这种&quot;田忌赛马&quot;式的博弈，让回合制FPS的战术维度从&quot;枪法对决&quot;升级为&quot;规则对抗&quot;。在生化模式中，玩家通过击杀或生存积累点数，激活至多10张卡牌组成专属Build。现在的玩法框架下随机性太强，削弱了技术的重要性。独特的碎片卡机制。卡牌强度失衡。</li><li>The Card system is not very good for competitive play.</li><li>Hate the card system, the worst idea you can come up with in a competitive game!</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">14.</span>
+                        <span class="point-text">基础移动机制被锁在卡牌后</span>
+                        <span class="point-volume">提及体量: 12条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>1 вcome from personage and other comes from cards, но что quebra are именно the cards, some cards are very broken, like the sword one, which simply the bullet doesn&#x27;t hit the adversary. cards have to be re-worked, should have only one purpose, like a card to close 1 bomb, give more ammo, prohibit 2 users from using some abilities of their characters, nothing of overpowered item that if you throw the bullet doesn&#x27;t give damage</li><li>Идея с карточками меняющими правилами рабочая, но не в режиме бомбы опять же, это добавляет тонну хаоса и что еще хуже - рандома между команд, который был бы уместен в аркадном рубилове но не в компетитив шутере, рандома тут передоз, от случайных карточек для обеих команд, до дуэлей на последнем раунде где у одних персонажей будет огромное преимущество над другими. Режимы аркад, экей режимы которые должны были быть целевыми, полный скучный мусор, единственный нормальный дезматч внимание имеет 3 слота под скиллы персонажа (а у них их 3) И карточки, либо то либо то, какой в этом смысл? ты либо играешь на полноценном персе без главной механики игры либо с карточками но пустым ботиком с пушкой. Некоторые механики карточек реально фановые</li><li>Only real gripe is that some mechanics like sliding are hidden behind the card system. I&#x27;d rather see that mainlined for consistent, faster movement.</li><li>我认为滑铲和移速增加不应该以卡片形式出现，而是常驻才更合理。特别是滑铲，本来就是一个常规动作，大部分快节奏游戏都有的操作，你非得选卡片才能拥有，说实话我觉得这游戏团队竞技模式反而比标准模式玩着更爽。希望至少把滑铲加至默认操作，踢出卡槽。</li><li>Plusieurs style de jeu mélanger avec une touche de fun que les cartes peuvent apporter. dans les match rotation où nos perso n&#x27;ont plus leurs compétences, pour les avoirs il faut les mettre à la place de carte qui aurait pu ajouté plus de fun et de stratégie</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">15.</span>
+                        <span class="point-text">卡牌系统沦为噱头，无法支撑长期游玩</span>
+                        <span class="point-volume">提及体量: 32条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>The cards were interesting and fun for the first couple of hours but they ultimately cannot carry the game after you&#x27;ve seen most of the effects</li><li>made the cards feel to gimmicky. Cards feel like they could be replaced with a lot of chance based things like a slot machine (ignoring age rating) or rolling dice? ( thats a maybe but it could work ) and thier effects just feel like scrapped abilities for charecters or random bonuses to stuff to fill the card count ( 172~ in first season and 212 in second wtf is there )</li><li>It&#x27;s like part shooter game, part deckbuilder, and part casino.</li><li>200 shard cards
+15 lancers, each with 3 unique abilities = 45 abilities
+That&#x27;s a total of 245 different abilities you&#x27;re expected to either learn or have some basic knowledge of from the beginning.
+
+Sure, these abilities may seem fun at first, but that novelty wears off fast. They begin to feel less like tools and more like noise. In many matches, they became annoying rather than engaging.
+
+If people complain that Spectre Divide has obscure and ambiguous mechanics, this game is on a whole other level.
+And keep in mind: this is just the start. As the game expands, you&#x27;ll have to deal with even more cards and abilities.</li><li>新玩法就是卡片，娱乐性和竞技性都不够。既跳脱不开传统射击的模板，仅有的新意又比较鸡肋</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                </div>
+            <div class="category-section">
+                <h3>后期 (10-50小时)</h3>
+            
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">1.</span>
+                        <span class="point-text">卡牌系统带来创新玩法，让每一局比赛都独一无二</span>
+                        <span class="point-volume">提及体量: 130条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>The standout &quot;Shard Card&quot; system is a masterpiece of design, allowing players to fundamentally alter the rules of every round—whether it&#x27;s flipping the map upside down, turning floors to ice, or equipping explosive ammo—ensuring that the meta never gets stale and no two matches ever feel the same.</li><li>I still dig the many different ways a round can be played due to the shard card system, and I think it&#x27;s been implemented really well to avoid any one round from being incredibly unfair to one team.</li><li>the card system is good at spicing things up. Quite literally [idk the exact number but a very high number] total combinations to make every round interesting and memorable. learning what all the cards do.</li><li>gran variedad de cartas in game que hacen las rondas freneticas y direfentes en cada una de ellas.</li><li>Les cartes donne un truc en plus sa change les manches voir les games c&#x27;est cool et original, y&#x27;en a vraiment beaucoup j&#x27;ai du mal a retenir</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">2.</span>
+                        <span class="point-text">卡牌种类丰富多样，数量庞大</span>
+                        <span class="point-volume">提及体量: 47条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>每характеру farklı yeteneği var oyunun gidişatını değiştiren bir sürü kart var adamlar klasik bomba mekaniğini de koruyalım diyip tabancalara bile flash smoke grande eklemiş</li><li>Tons of cards btw.</li><li>the card system is good at spicing things up. Quite literally [idk the exact number but a very high number] total combinations to make every round interesting and memorable. learning what all the cards do.</li><li>gran variedad de cartas in game que hacen las rondas freneticas y direfentes en cada una de ellas.</li><li>Les cartes donne un truc en plus sa change les manches voir les games c&#x27;est cool et original, y&#x27;en a vraiment beaucoup j&#x27;ai du mal a retenir</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">3.</span>
+                        <span class="point-text">卡牌效果改变战局规则，增加战略深度</span>
+                        <span class="point-volume">提及体量: 103条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>每характеру farklı yeteneği var oyunun gidişatını değiştiren bir sürü kart var adamlar klasik bomba mekaniğini de koruyalım diyip tabancalara bile flash smoke grande eklemiş</li><li>Game onde não é a arma que conta, mas sim as suas habilidades e as suas escolhas de cartas que mandam no jogo.</li><li>The standout &quot;Shard Card&quot; system is a masterpiece of design, allowing players to fundamentally alter the rules of every round—whether it&#x27;s flipping the map upside down, turning floors to ice, or equipping explosive ammo—ensuring that the meta never gets stale and no two matches ever feel the same.</li><li>в ход идут карты, которые вносят хаос и могут полностью поменять течение раунда. Особенностью FragPunk является наличие карточной системы, меняющей условия боя в рамках одного раунда. Некоторые дают небольшие бонусы, такие как увеличенное здоровье, двойной прыжок и вампиризм. Другие накладывают на врагов дебаффы: они оставляют за собой следы, не могут восстанавливать здоровье, имеют увеличенные головы. Есть и те, которые влияют на обе команды — например, после смерти игроки превращаются в зомби, все могут использовать только ножи. Всего их количество на данный момент переваливает за 150. Да, эти самые карточки вносят определенный дисбаланс, но именно это и делает игру такой веселой, ведь никогда не знаешь, чего тебе подкинет рандом. Вам необходимо подстраиваться под ситуацию, стараться использовать возможности ваших баффов по максимуму и находить контрмеры вражеским карточкам. Благодаря этому, каждый раунд немного или сильно отличается друг от друга, а это плюс к реиграбельности. Кстати, в соревновательном режиме гораздо меньше хаоса из-за отсутствия некоторых карт и наличию системы банов, но так игра все-таки теряет часть своей привлекательности. Принцип активации карточек заключается в следующем. Перед началом раунда вам на выбор предлагают три штуки, а для того, чтобы хотя бы одна из них заработала, необходимо всей командой потратить на нее определенное количество ресурса, получаемого в ходе матча. Интересная система карт</li><li>the gameplay the agents and the cards are very fun to play around with. the game takes some aspects from valo and builds upon them with new mechanics especially with the reality distorting cards you get to pick</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">4.</span>
+                        <span class="point-text">卡牌系统让游戏更具趣味性和娱乐性</span>
+                        <span class="point-volume">提及体量: 186条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>as cartas de fragmento são um diferencial que o jogo traz, o que deixa a experiência muito intrigante.</li><li>The Shard cards shake up every round, and honestly that&#x27;s what makes it fun. some cards are kinda busted.</li><li>esse sistema de cartas pra mudar as regras faz bastante diferença pra nao ficar aquela mesma coisa cansativa de sempre e faz vc ir jogando bastante sem perceber</li><li>Fun mechanics in the cards</li><li>the cards range from whatever to genuinely insane rounds</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">5.</span>
+                        <span class="point-text">卡牌机制打破了传统FPS的单调重复</span>
+                        <span class="point-volume">提及体量: 63条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>I still dig the many different ways a round can be played due to the shard card system, and I think it&#x27;s been implemented really well to avoid any one round from being incredibly unfair to one team.</li><li>esse sistema de cartas pra mudar as regras faz bastante diferença pra nao ficar aquela mesma coisa cansativa de sempre e faz vc ir jogando bastante sem perceber</li><li>o sistema de cartas trás um bom dinamismo</li><li>The card mechanic bring fresh air on the fps genre</li><li>通过卡牌变得多样化和非常有趣。</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">6.</span>
+                        <span class="point-text">卡牌系统鼓励团队协作和策略沟通</span>
+                        <span class="point-volume">提及体量: 23条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>в ход идут карты, которые вносят хаос и могут полностью поменять течение раунда. Особенностью FragPunk является наличие карточной системы, меняющей условия боя в рамках одного раунда. Некоторые дают небольшие бонусы, такие как увеличенное здоровье, двойной прыжок и вампиризм. Другие накладывают на врагов дебаффы: они оставляют за собой следы, не могут восстанавливать здоровье, имеют увеличенные головы. Есть и те, которые влияют на обе команды — например, после смерти игроки превращаются в зомби, все могут использовать только ножи. Всего их количество на данный момент переваливает за 150. Да, эти самые карточки вносят определенный дисбаланс, но именно это и делает игру такой веселой, ведь никогда не знаешь, чего тебе подкинет рандом. Вам необходимо подстраиваться под ситуацию, стараться использовать возможности ваших баффов по максимуму и находить контрмеры вражеским карточкам. Благодаря этому, каждый раунд немного или сильно отличается друг от друга, а это плюс к реиграбельности. Кстати, в соревновательном режиме гораздо меньше хаоса из-за отсутствия некоторых карт и наличию системы банов, но так игра все-таки теряет часть своей привлекательности. Принцип активации карточек заключается в следующем. Перед началом раунда вам на выбор предлагают три штуки, а для того, чтобы хотя бы одна из них заработала, необходимо всей командой потратить на нее определенное количество ресурса, получаемого в ходе матча. Интересная система карт</li><li>great game really watch what all shard cards are picked it could really hurt you and your team but it makes the game fun for sure a must play.</li><li>А вот ключевая фишка — карты — это уже что-то более-менее уникальное. В зависимости от режима даётся 3 карты на выбор, ты голосуешь специальными очками за любые из трёх, насколько очков хватит, и так же делают тиммейты. Очки по ходу успешности матча зарабатываются. Стоимость карт зависит от их рарности и в целом силы эффекта, который они дают. Разнообразие тут хорошее. Одни могут увеличивать голову противников, чтобы проще было попасть, другие дают скрытность, пока в приседе, есть и такие, что меняют геймплей всей карты: блокируют проходы, дают ставить бомбу в любой точке, а не в отмеченных. В общем, тут хорошее разнообразие, и каждый матч по-своему становится уникальным, так как карты в каждом раунде рандомные и не всегда хватает очков, чтобы проголосовать за все или даже за одну.</li><li>En büyük farkı round başı seçtiğimiz kartlar. Kart sisteminin oyuna direkt etkisi var. Herkes oyunda topladığı puanları ortaklaşa kullanarak kart alıyor. Mesela kartların bazıları bomba kurulan bölgelerden birini devre dışı bırakıyor, diğeri rakipleri hasar alınca %55 daha yavaşlatıyor veya ölünce zombi olarak tekrar doğuyorsunuz.</li><li>the Cards for each round adds a nice touch but pay wisely or you&#x27;ll end up regretting your decisions</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">7.</span>
+                        <span class="point-text">卡牌带来的随机性和不可预测性提升游戏体验</span>
+                        <span class="point-volume">提及体量: 39条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>в ход идут карты, которые вносят хаос и могут полностью поменять течение раунда. Особенностью FragPunk является наличие карточной системы, меняющей условия боя в рамках одного раунда. Некоторые дают небольшие бонусы, такие как увеличенное здоровье, двойной прыжок и вампиризм. Другие накладывают на врагов дебаффы: они оставляют за собой следы, не могут восстанавливать здоровье, имеют увеличенные головы. Есть и те, которые влияют на обе команды — например, после смерти игроки превращаются в зомби, все могут использовать только ножи. Всего их количество на данный момент переваливает за 150. Да, эти самые карточки вносят определенный дисбаланс, но именно это и делает игру такой веселой, ведь никогда не знаешь, чего тебе подкинет рандом. Вам необходимо подстраиваться под ситуацию, стараться использовать возможности ваших баффов по максимуму и находить контрмеры вражеским карточкам. Благодаря этому, каждый раунд немного или сильно отличается друг от друга, а это плюс к реиграбельности. Кстати, в соревновательном режиме гораздо меньше хаоса из-за отсутствия некоторых карт и наличию системы банов, но так игра все-таки теряет часть своей привлекательности. Принцип активации карточек заключается в следующем. Перед началом раунда вам на выбор предлагают три штуки, а для того, чтобы хотя бы одна из них заработала, необходимо всей командой потратить на нее определенное количество ресурса, получаемого в ходе матча. Интересная система карт</li><li>Shard Cards让每一轮都保持新鲜和不可预测，增加了有趣的转折，使每场比赛都感觉独特。</li><li>The unique card-based twist adds a whole new layer of strategy that keeps every match unpredictable and insanely fun.</li><li>the element of the shard cards are a new breath of fresh air and it sometimes can make or break a game, every card counts.</li><li>А вот ключевая фишка — карты — это уже что-то более-менее уникальное. В зависимости от режима даётся 3 карты на выбор, ты голосуешь специальными очками за любые из трёх, насколько очков хватит, и так же делают тиммейты. Очки по ходу успешности матча зарабатываются. Стоимость карт зависит от их рарности и в целом силы эффекта, который они дают. Разнообразие тут хорошее. Одни могут увеличивать голову противников, чтобы проще было попасть, другие дают скрытность, пока в приседе, есть и такие, что меняют геймплей всей карты: блокируют проходы, дают ставить бомбу в любой точке, а не в отмеченных. В общем, тут хорошее разнообразие, и каждый матч по-своему становится уникальным, так как карты в каждом раунде рандомные и не всегда хватает очков, чтобы проголосовать за все или даже за одну.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">8.</span>
+                        <span class="point-text">卡牌系统在FPS游戏中具有开创性和独特性</span>
+                        <span class="point-volume">提及体量: 123条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>The standout &quot;Shard Card&quot; system is a masterpiece of design, allowing players to fundamentally alter the rules of every round—whether it&#x27;s flipping the map upside down, turning floors to ice, or equipping explosive ammo—ensuring that the meta never gets stale and no two matches ever feel the same.</li><li>抽奖卡池+经典下包拆包模式，fps新玩法</li><li>Think about if Valorant, and a card game was combined, BOOM FRAGPUNK!</li><li>Your average 5v5 shooter but with actually unique cards with unique effects</li><li>ideia com картами тоже очень интересная, а также восхищает их разнообразие</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">9.</span>
+                        <span class="point-text">卡牌严重不平衡，部分卡牌过于强力或无用</span>
+                        <span class="point-volume">提及体量: 72条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>为了娱乐性导致卡组还有角色特别超模吧 比如影刺隐身可以刀人 还有好多带透视的角色和卡 有张卡是超级听力这不就是和直接开挂一样了嘛</li><li>карты меняют тактику на лету, царит неразбериха и веселье. Но быстро проявляются проблемы: одни комбинации карт слишком сильные, матчмейкинг подкидывает неравные бои, а карты повторяются. Свежая идея, но пока сыровата. Если добавят контента и починят баланс — будет круто</li><li>карточными баффами — первые бои будто попадаешь в безумный мультфильм, где каждый раунд непредсказуем. Система перков на лету меняет тактику: то превращаешься в невидимого убийцу, то раздаёшь щиты союзникам. Но чем дальше, тем заметнее, что за креативной механикой скрывается знакомая проблема баланса — одни комбинации карт заведомо сильнее. Через неделю карты начинают повторяться.</li><li>карточными баффами — первые бои будто попадаешь в безумный мультфильм, где каждый раунд непредсказуем. Система перков на лету меняет тактику: то превращаешься в невидимого убийцу, то раздаёшь щиты союзникам. Но чем дальше, тем заметнее, что за креативной механикой скрывается знакомая проблема баланса — одни комбинации карт заведомо сильнее. Через неделю карты начинают повторяться.</li><li>There are many balance problems, but it&#x27;s more depends, what shardcards are used. Balance - shardcards are makeing gameplay harder and easier, but sometimes you cant understand, is this person cheating or it&#x27;s somekind of shardcard.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">10.</span>
+                        <span class="point-text">卡牌随机性破坏竞技公平性</span>
+                        <span class="point-volume">提及体量: 39条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>lo random que son las cartas y que literalmente pierdes rondas por no comprender que diablos esta pasando, o porque directamente hay cartas tan fuertes que si el RNG de estas termina favoreciendo mas a un equipo que al otro pierdes por eso.</li><li>Инновационная карточная система (Shard Cards) Позволяет игрокам адаптировать тактику и создавать неожиданные ситуации. Вносит элемент веселья и непредсказуемости, что отличает FragPunk от других шутеров. Слишком много рандома Шард-карты могут решить исход раунда не из-за мастерства, а из-за удачного выпадения (например, &quot;Все на ножах&quot; против команды с дробовиками). В ранговых матчах это вызывает раздражение, так как победа зависит от везения. Доработать карточную систему Ввести систему банов карт в ранговых матчах (начиная с Gold). Уменьшить влияние слишком мощных карт (например, &quot;Большие головы&quot; или &quot;Рубильник&quot;).</li><li>Shard cards make every match dynamic however also add a very high learning curve.</li><li>a lot of RNG in a competitive game</li><li>total caos, tem 211 cartas, mas é full random as que vem. tem um &#x27;&#x27; artefato &#x27;&#x27; que da um efeito passivo para partida. pick e ban é apenas do diamante pra cima. pick e ban é apenas de carta e nao de &#x27;&#x27; lanceiros &#x27;&#x27;. você ganha pontos para poder ativar as cartas.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">11.</span>
+                        <span class="point-text">卡牌数量过多且重复率高</span>
+                        <span class="point-volume">提及体量: 24条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Too much cards (for me)</li><li>the card thing gets old pretty fast</li><li>карты меняют тактику на лету, царит неразбериха и веселье. Но быстро проявляются проблемы: одни комбинации карт слишком сильные, матчмейкинг подкидывает неравные бои, а карты повторяются. Свежая идея, но пока сыровата. Если добавят контента и починят баланс — будет круто</li><li>карточными баффами — первые бои будто попадаешь в безумный мультфильм, где каждый раунд непредсказуем. Система перков на лету меняет тактику: то превращаешься в невидимого убийцу, то раздаёшь щиты союзникам. Но чем дальше, тем заметнее, что за креативной механикой скрывается знакомая проблема баланса — одни комбинации карт заведомо сильнее. Через неделю карты начинают повторяться.</li><li>карточными баффами — первые бои будто попадаешь в безумный мультфильм, где каждый раунд непредсказуем. Система перков на лету меняет тактику: то превращаешься в невидимого убийцу, то раздаёшь щиты союзникам. Но чем дальше, тем заметнее, что за креативной механикой скрывается знакомая проблема баланса — одни комбинации карт заведомо сильнее. Через неделю карты начинают повторяться.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">12.</span>
+                        <span class="point-text">选卡时间过长影响游戏节奏</span>
+                        <span class="point-volume">提及体量: 8条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Wymaga poprawek w interfejsie, długości rund rankingowych oraz uproszczenia systemu kart.</li><li>Core element of the game are the cards that change the gameplay but I felt that it was some of the broken characters that changed it, not the cards. In high rank you can ban some cards but not characters and it takes at least a minute to start every round making it tedious to play.</li><li>Cards should of been more interactive with the gameplay rather then a vote system at the start that just feels like ticking off a box. there is very few cards you can play mid match, you can&#x27;t find them on the map nor attain new ones everyone has to vote on cards at start of each round, it&#x27;s a Terrible system imo because when it comes down too it, the only thing that makes this game different from every other hero shooter was the cards and they were completely off the mark with how they implemented it.</li><li>특성카드 뽑기로 덜 지루한 동시에, 매 라운드 카드 선택에 시간 지연</li><li>зацепило то, как влияют на игру эти карты и их количество. выбор этих карт, доставлял удовольствие, было интересно, то спустя десятки часов в игре, я бы убрал это из игры, всё это голосование тратит слишком много времени и быстро надоедает.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">13.</span>
+                        <span class="point-text">卡牌信息不清晰，新手学习曲线陡峭</span>
+                        <span class="point-volume">提及体量: 15条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>А добавление механики карт действительно разнообразило геймплей. Теперь, на мой взгляд, главная проблема игры — карты. Да, те самые, которые мне сначала понравились. Но по сути — это просто развлечение. На старте игры, кроме рейтингового режима на платине и выше, нигде не было системы бана карт. Именно такой системы, которая могла бы сбалансировать игру и сделать её более доступной для новичков. В игре сотни карт, и не каждый игрок, пришедший из других шутеров, готов запоминать их все. Да, есть система постепенного открытия карт, но лично мне хочется контролировать, что выберет моя команда и команда противника.</li><li>There are just too many shard cards and understanding them may take a while</li><li>Shard cards make every match dynamic however also add a very high learning curve.</li><li>the cards are more of a burden than a cool game mechanic which is weird if thats the main selling point. Even if it was like friends vs friends where you get to make a deck to use cards you actually like then it would be better</li><li>no sliding by default (feature obtained through a rare shard card for one round)</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">14.</span>
+                        <span class="point-text">队友可随意使用他人积分选卡</span>
+                        <span class="point-volume">提及体量: 6条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Leute die ihre Gems nicht nutzen um Karten zu voten oder den ,,Cardleader´´ bekommen und dann AFK gehen sodass man selber nicht mehr Karten voten kann</li><li>如果你和随机玩家一起玩，他们会投票选择最无用的卡牌</li><li>除了你可以幸运获得的卡牌外，没有子弹穿透。如果一个人是个混蛋，他可以决定不花他的硬币和队伍其他人一起买卡牌，这意味着你基本上是在玩6v4。</li><li>there is no way to stop it afterwards, it keeps getting abused and most of the time these players are just trols and spend them on bad cards. really dislike that system</li><li>like the card says you can relocate sites and NO ONE DOES IT except for me. DID YOU EVEN READ WHAT YOU INVESTED 5 POINTS FOR</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">15.</span>
+                        <span class="point-text">卡牌机制在排位赛中不合适</span>
+                        <span class="point-volume">提及体量: 23条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Инновационная карточная система (Shard Cards) Позволяет игрокам адаптировать тактику и создавать неожиданные ситуации. Вносит элемент веселья и непредсказуемости, что отличает FragPunk от других шутеров. Слишком много рандома Шард-карты могут решить исход раунда не из-за мастерства, а из-за удачного выпадения (например, &quot;Все на ножах&quot; против команды с дробовиками). В ранговых матчах это вызывает раздражение, так как победа зависит от везения. Доработать карточную систему Ввести систему банов карт в ранговых матчах (начиная с Gold). Уменьшить влияние слишком мощных карт (например, &quot;Большие головы&quot; или &quot;Рубильник&quot;).</li><li>А добавление механики карт действительно разнообразило геймплей. Теперь, на мой взгляд, главная проблема игры — карты. Да, те самые, которые мне сначала понравились. Но по сути — это просто развлечение. На старте игры, кроме рейтингового режима на платине и выше, нигде не было системы бана карт. Именно такой системы, которая могла бы сбалансировать игру и сделать её более доступной для новичков. В игре сотни карт, и не каждый игрок, пришедший из других шутеров, готов запоминать их все. Да, есть система постепенного открытия карт, но лично мне хочется контролировать, что выберет моя команда и команда противника.</li><li>total caos, tem 211 cartas, mas é full random as que vem. tem um &#x27;&#x27; artefato &#x27;&#x27; que da um efeito passivo para partida. pick e ban é apenas do diamante pra cima. pick e ban é apenas de carta e nao de &#x27;&#x27; lanceiros &#x27;&#x27;. você ganha pontos para poder ativar as cartas.</li><li>Core element of the game are the cards that change the gameplay but I felt that it was some of the broken characters that changed it, not the cards. In high rank you can ban some cards but not characters and it takes at least a minute to start every round making it tedious to play.</li><li>Неплохая карта, правда я бы отменил карточки в рейтинге (I would cancel the cards in rating)</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">16.</span>
+                        <span class="point-text">僵尸模式卡组共享设计不合理</span>
+                        <span class="point-volume">提及体量: 0条</span>
+                    </div>
+                    
+                </div>
+                </div>
+            <div class="category-section">
+                <h3>资深 (50小时+)</h3>
+            
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">1.</span>
+                        <span class="point-text">每回合都有新鲜感，游戏永不重复</span>
+                        <span class="point-volume">提及体量: 183条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>They added a tower defense game mode with around 100 or more cards just for it and I was suprised how fun it was. Shard cards add a dynamic mechanic to the game that change up playstyles and makes you mixup lancers or weapons keeping it fresh.</li><li>o sistema de cartas deixa cada partida diferente da outra</li><li>Cada ronda cambia radicalmente gracias a las cartas que seleccionas y que seleccionan tus rivales.</li><li>最惊艳的核心无疑是碎片卡机制，这直接颠覆了射击游戏的固有规则。100多张卡片随机轮换，每回合全队凑能量点激活，上一秒还在常规对枪，下一秒就可能触发&quot;攻守互换&quot;把阵地拱手让人，或是开出&quot;治疗子弹&quot;对着队友疯狂输出回血。我见过最离谱的局：队友激活&quot;声量大增移速翻倍&quot;卡，全队对着麦克风嗷嗷乱叫冲脸；也试过用&quot;击碎倒计时屏障&quot;卡，直接打乱对面防守节奏偷家成功。这种随机性让每局都充满新鲜感。</li><li>the &quot;shard card&quot; system allows creative gameplay - every round can be played different based on the shard cards chosen by the team.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">2.</span>
+                        <span class="point-text">卡牌种类丰富且富有创意</span>
+                        <span class="point-volume">提及体量: 100条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>The cards make it super fun!</li><li>They added a tower defense game mode with around 100 or more cards just for it and I was suprised how fun it was. Shard cards add a dynamic mechanic to the game that change up playstyles and makes you mixup lancers or weapons keeping it fresh.</li><li>Currently the event of Halloween is a tower defense with deck building mechanics very original for a FPS.</li><li>amazing 5v5 defusal game with cards that range from lifesteal to &quot;plant the bomb anywhere on the map&quot;</li><li>最惊艳的核心无疑是碎片卡机制，这直接颠覆了射击游戏的固有规则。100多张卡片随机轮换，每回合全队凑能量点激活，上一秒还在常规对枪，下一秒就可能触发&quot;攻守互换&quot;把阵地拱手让人，或是开出&quot;治疗子弹&quot;对着队友疯狂输出回血。我见过最离谱的局：队友激活&quot;声量大增移速翻倍&quot;卡，全队对着麦克风嗷嗷乱叫冲脸；也试过用&quot;击碎倒计时屏障&quot;卡，直接打乱对面防守节奏偷家成功。这种随机性让每局都充满新鲜感。</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">3.</span>
+                        <span class="point-text">增加了战略深度和战术多样性</span>
+                        <span class="point-volume">提及体量: 82条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>They added a tower defense game mode with around 100 or more cards just for it and I was suprised how fun it was. Shard cards add a dynamic mechanic to the game that change up playstyles and makes you mixup lancers or weapons keeping it fresh.</li><li>en ajoutant la mécanique intéressante de cartes à choisir au début de manche qui va affecter les règles.</li><li>the &quot;shard card&quot; system allows creative gameplay - every round can be played different based on the shard cards chosen by the team.</li><li>The card system makes most rounds different. And it&#x27;s super rewarding to know all the little knowledge and rare interactions for niche things.</li><li>сначала карты выпадают рандомно, на хай рангах вы уже начинаете каждый раунд с подобия капитанс драфта в доте (пики-баны карт на две команды), где важно соблюдать экономику чтобы вам хватило очков на покупку карт в следующем раунде, при этом не все зависит от рандома</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">4.</span>
+                        <span class="point-text">高度的不可预测性和混乱趣味性</span>
+                        <span class="point-volume">提及体量: 69条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>最惊艳的核心无疑是碎片卡机制，这直接颠覆了射击游戏的固有规则。100多张卡片随机轮换，每回合全队凑能量点激活，上一秒还在常规对枪，下一秒就可能触发&quot;攻守互换&quot;把阵地拱手让人，或是开出&quot;治疗子弹&quot;对着队友疯狂输出回血。我见过最离谱的局：队友激活&quot;声量大增移速翻倍&quot;卡，全队对着麦克风嗷嗷乱叫冲脸；也试过用&quot;击碎倒计时屏障&quot;卡，直接打乱对面防守节奏偷家成功。这种随机性让每局都充满新鲜感。</li><li>Instead it surprised me quite well mostly with &quot;Shard Cards&quot;, an unique game changing mechanic that has given me nothing but fun experiences. Almost every shard card is unique in it&#x27;s own way and some are so chaotic that they can completely change the way game is played, from &quot;take your eye out and place it as a surveillance camera&quot; to &quot;when you damage an enemy spawn a grim reaper that will slash everything around them&quot;, and my personal favourite &quot;when enemy dies they leave a soul on the ground, pick it up and change your gun and character into thiers&quot; allowing for the most epic clutches ever.</li><li>卡牌随机性大，竞技性不高反而给上班族很大快乐</li><li>j&#x27;adore le gameplay avec le principe des gemmes et des cartes à jouer au début de chaque round. Si on a une bonne pioche, on peut renverser la partie.</li><li>It keeps the classic 5v5 bomb-site setup but shakes things up with a card system that grants players wild, rule-bending abilities, like fire-spitting shotguns or vampire transformations, earned through points each round. Unlike its peers, Fragpunk frees players from buying abilities or weapons with cash - everything&#x27;s available from the start, and gun restrictions ensure no single weapon dominates the meta.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">5.</span>
+                        <span class="point-text">核心差异化特色，区别于其他FPS游戏</span>
+                        <span class="point-volume">提及体量: 113条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Currently the event of Halloween is a tower defense with deck building mechanics very original for a FPS.</li><li>amazing 5v5 defusal game with cards that range from lifesteal to &quot;plant the bomb anywhere on the map&quot;</li><li>最惊艳的核心无疑是碎片卡机制，这直接颠覆了射击游戏的固有规则。100多张卡片随机轮换，每回合全队凑能量点激活，上一秒还在常规对枪，下一秒就可能触发&quot;攻守互换&quot;把阵地拱手让人，或是开出&quot;治疗子弹&quot;对着队友疯狂输出回血。我见过最离谱的局：队友激活&quot;声量大增移速翻倍&quot;卡，全队对着麦克风嗷嗷乱叫冲脸；也试过用&quot;击碎倒计时屏障&quot;卡，直接打乱对面防守节奏偷家成功。这种随机性让每局都充满新鲜感。</li><li>I really like how the game works with the Shard Cards and the way they change the rules.</li><li>Instead it surprised me quite well mostly with &quot;Shard Cards&quot;, an unique game changing mechanic that has given me nothing but fun experiences. Almost every shard card is unique in it&#x27;s own way and some are so chaotic that they can completely change the way game is played, from &quot;take your eye out and place it as a surveillance camera&quot; to &quot;when you damage an enemy spawn a grim reaper that will slash everything around them&quot;, and my personal favourite &quot;when enemy dies they leave a soul on the ground, pick it up and change your gun and character into thiers&quot; allowing for the most epic clutches ever.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">6.</span>
+                        <span class="point-text">高段位排位模式平衡性良好</span>
+                        <span class="point-volume">提及体量: 25条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>сначала карты выпадают рандомно, на хай рангах вы уже начинаете каждый раунд с подобия капитанс драфта в доте (пики-баны карт на две команды), где важно соблюдать экономику чтобы вам хватило очков на покупку карт в следующем раунде, при этом не все зависит от рандома</li><li>The card system in standard mode kind of sucks, especially if people don&#x27;t agree or aren&#x27;t familiar of the cards effects. it seems there&#x27;s longer wait times for ranked games. but the card system makes more sense.</li><li>The shard cards make the game loosen redundancy, unlike games such as valorant, csgo, call of duty, ect. constant addition of new cards, ranked having a perfect balance of competitiveness and dynamic cards</li><li>Pour ceux qui se plaignent de la rng du système de carte, le vrai mode ranked (à partir du platine ou diamant) propose un système de bannissement et vote en rotation, ça change pas mal de choses</li><li>Рейтинговые карты в целом сбалансированы</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">7.</span>
+                        <span class="point-text">降低了纯枪法要求，增加了可玩性</span>
+                        <span class="point-volume">提及体量: 10条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>這款遊戲與CS、瓦羅蘭最大的不同是，這遊戲每回合都需要透過投票選出隊伍的&quot;碎片卡&quot; 碎片卡可以在當前回合內賦予隊伍或者遊戲地圖各種各樣的效果 可以說每一回合的體驗都不一樣 個人覺得比CS好玩多了 4.槍法不是最重要的 這遊戲因為有碎片卡的機制 善用碎片卡給的優勢比較重要</li><li>FragPunk! O jogo que perguntou: &quot;E se a gente pegasse um jogo de tiro competitivo e colocasse o UNO no meio?&quot;. Basicamente, você entra em uma partida 5x5, pronto para mostrar suas habilidades de mira impecáveis, mas aí o time inimigo joga uma carta que transforma a cabeça de todo mundo em um alvo gigante ou faz as balas virarem melancias saltitantes. É o caos perfeito. Aquele momento em que você perde um duelo não é por falta de habilidade, mas sim porque o adversário ativou a carta &quot;Ensaboado&quot; e você deslizou para a mira dele</li><li>一番肝心なのはカードだけがすべてを凌駕するということ。脳みそに少しシワがついただけの偏差値BFの人間はカードが理不尽と嘆くだろうが、結局はカードの効果を深く理解し、なおかつ適切な使い方をできる知能を持った人間がこのゲームでは一番強い人種なのでふるいにかけられるだろう。(カードが弱い時はラウンドを捨てるのも選択の内)</li><li>i really think the shard cards add a fun twist. that can even help bridge skill gap.</li><li>I&#x27;d simply like my review to stick to the game and its gameplay. I love Fragpunk. I&#x27;m not good at shooters as I can&#x27;t aim, but Fragpunk introduces a beautiful mechanic of the card system that doesn&#x27;t make it just about shooting like cs or valorant. The cards are all really intuitive and change the game up to the point where every round and match has a unique feel to it. Are your enemies head&#x27;s too hard to shoot? make them bigger. Are they shooting your head? make your head smaller. Do you like using your shotgun? double it&#x27;s damage for the round. From making sites foggy to giving your team the ability to ground pound enemies, Fragpunk has introduces several amazing mechanics that are all exhilirating. It&#x27;s definitely difficult to introduce game changing cards to a 5v5 shooter, but I think the developers have balanced it very well so far, where attackers usually get an innate advantage most rounds to give them a better shot and making it a closer match overall. The card system plays off of everything; your character, your gun choices, your playstyle, and the map itself. The same can be said with cards (for example, there is a bat familiar card that gives you and your teammates a bat that scans your immediate area, but the bat is so damn loud it often tells the enemies where YOU are than the other way around). That being said, they also have been rotating cards in and out so it&#x27;s not a critical concern</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">8.</span>
+                        <span class="point-text">持续更新和社区互动性强</span>
+                        <span class="point-volume">提及体量: 21条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>卡牌更新目前也很频繁</li><li>Each game being unique is really cool. the updated cards are really fun to play too</li><li>the cards they rotate and add new ones so it doesn&#x27;t get repetitive</li><li>The shard cards game play, the periodical additional fun modes like Outbreak or Prop Hunt, are truly so fun and hooking!</li><li>The shard cards make the game loosen redundancy, unlike games such as valorant, csgo, call of duty, ect. constant addition of new cards, ranked having a perfect balance of competitiveness and dynamic cards</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">9.</span>
+                        <span class="point-text">卡牌平衡性极差，部分卡牌过于强势</span>
+                        <span class="point-volume">提及体量: 27条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>the CONCEPT of shard cards which are poorly executed and unbalanced in of itself.</li><li>some annoying cards</li><li>карты дают дикий дисбаланс : да хуй там с рангов по брилик до грандмастер есть чёткое правило что карт всего 8 и 2 бана , карт за раунд вы можете взять 3 но доступно будет 6 или 7 если кто то не забанит туже карту либо вообще просто не будет банить потому что они играю за сторону атаки и пикают 1 зачем им банить сильную карту под атаку , в основном нет сильных карт чтобы прям разорвать оборону противника , да можно очень сильно пушить с какой либо картой но такие банятся обычно с обоих сторон тк атаке не выгодно чтоб защита их с кайфом пропушила тк и защита особо не хочет отдать плент</li><li>Maybe the shard cards twist the rules a bit too much sometimes</li><li>The shard system is fun but there really shouldnt be shards that are straight up win conditions.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">10.</span>
+                        <span class="point-text">卡牌系统随机性过高，运气因素大于技术</span>
+                        <span class="point-volume">提及体量: 20条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>shard cards in ranked makes the experience feel like one big joke. I&#x27;ve had games where attackers get incredible options one half, while the next team gets completely stiffed.</li><li>las putas cartitas hacen que la partida no esté igualada para nada. Si tienes la puta suerte de que te toque lo que te beneficia ganas, si al juego no le da la gana de dropearte algo con sentido estás sentenciado a perder esa partida desde el primer momento. Juego para gente con 100% de suerte y 0% de skills.</li><li>Las partidas son muy variadas, todo depende de las cartas que escojas: en una ronda puedes tener una estrategia y en la siguiente toca una carta que hace que las escopetas echen fuego, por lo que te están &quot;obligando&quot; a ir en escopeta para tener más posibilidades de ganar (siempre puedes coger el arma que quieras, pero digo &quot;obligando&quot; porque es lo más recomendable, jugar en torno a las cartas).</li><li>As cartas por muitas vezes são condição crucial de vitória, desbalanceando as partidas e criando um teor de sorte nas rodadas. Por muitas vezes os personagens possuem habilidades exageradamente fortes, que podem simplesmente dar ik sem nem um tipo de punimento.</li><li>the shard cards are a pretty fun way to change up matches and introduce new strategies, or completely toss strategy out the window. They also have terrible programming for cards, they slam shard points into all the cards with no rerolls so you end up getting weak or terrible cards while watching a good card go unused.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">11.</span>
+                        <span class="point-text">卡牌选择机制存在缺陷</span>
+                        <span class="point-volume">提及体量: 7条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>карты дают дикий дисбаланс : да хуй там с рангов по брилик до грандмастер есть чёткое правило что карт всего 8 и 2 бана , карт за раунд вы можете взять 3 но доступно будет 6 или 7 если кто то не забанит туже карту либо вообще просто не будет банить потому что они играю за сторону атаки и пикают 1 зачем им банить сильную карту под атаку , в основном нет сильных карт чтобы прям разорвать оборону противника , да можно очень сильно пушить с какой либо картой но такие банятся обычно с обоих сторон тк атаке не выгодно чтоб защита их с кайфом пропушила тк и защита особо не хочет отдать плент</li><li>Cards make it nice and somewhat different. voting system for cards makes games just endlessly doing nothing.</li><li>Le jeu était sympa en ranked jusqu&#x27;au rang diamant où le système de vote de carte est beaucoup trop long entre chaque manche</li><li>немного затянутый выбор карточек перед каждым раундом. выбор карт перед раундом (&quot;общий для обеих команд&quot; и с запретами). система с капитаном для выбора и запрета карт, по-моему, очень странная. теперь просто нет смысла следить за картами, ведь капитан чаще всего выбирает карты под себя.</li><li>재밌기는 확실히 재미있지만 다이아 이전까지 샤드카드 밴이 없어서 오인사격 , 사신의 낫이 나오면 참 답답했었다.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">12.</span>
+                        <span class="point-text">部分卡牌设计无意义或相互冲突</span>
+                        <span class="point-volume">提及体量: 10条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Players created far better cards from the devs</li><li>the shard cards are a pretty fun way to change up matches and introduce new strategies, or completely toss strategy out the window. They also have terrible programming for cards, they slam shard points into all the cards with no rerolls so you end up getting weak or terrible cards while watching a good card go unused.</li><li>隐身女干脆删了吧，笑死，这人物还没个隐身碎片卡好使。</li><li>jogadores que não sabem nem o basico das cartas que não tiram um tempo que seja para aprender, não precisa de ninguem ensinando isso, todos os cards do jogo estão la pra serem lidos e relidos sempre que quiser aprender</li><li>the &quot;Time To Snipe&quot; Shard card will be uselesss to use</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">13.</span>
+                        <span class="point-text">卡牌系统新鲜感短暂，缺乏长期吸引力</span>
+                        <span class="point-volume">提及体量: 4条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>But as time went on, system like the shard card becomes a chore, an irritant and it&#x27;s redundant. Yes it may be unique but absolutely redundant... Shard card system (to make each round unique)</li><li>卡牌系统属于初见很有趣，但后面就觉得没有一开始让人感觉得那么有趣；游戏平衡性比想象的好，但是高段排位很吃队友（特别是卡牌BP时）</li><li>Надеюсь разработчики продолжат дропать НОВЫЙ контент, а не дропать новых героев с точностью как старые и перевыпускать карты. Очень жду последующих обновлений, ибо к картам привыкаешь очень быстро из-за скорости матчей.</li><li>카드시스템도 초반에나 신기하고 재미있음.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">14.</span>
+                        <span class="point-text">竞技模式中卡牌系统破坏公平性</span>
+                        <span class="point-volume">提及体量: 7条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>shard cards in ranked makes the experience feel like one big joke. I&#x27;ve had games where attackers get incredible options one half, while the next team gets completely stiffed.</li><li>las putas cartitas hacen que la partida no esté igualada para nada. Si tienes la puta suerte de que te toque lo que te beneficia ganas, si al juego no le da la gana de dropearte algo con sentido estás sentenciado a perder esa partida desde el primer momento. Juego para gente con 100% de suerte y 0% de skills.</li><li>I can&#x27;t take it seriously as a competitive game considering it&#x27;s highly RNG dependent on which shard cards you get.</li><li>Card-Based Modifier System: One of FragPunk&#x27;s key features is the use of &quot;cards&quot; that alter gameplay dynamics in real time—changing gravity, speed, damage, or other parameters. For beginners, this levels the playing field by shifting focus away from pure mechanical skill to more adaptable and fun strategies. Randomness and Competitive Integrity: The card system introduces a degree of randomness that can negatively impact fairness. In competitive environments, unpredictability from non-skill-based modifiers can feel frustrating or unbalanced, particularly for players who value consistent performance.</li><li>des cartes qui ne devrait pas être en ranked
+le rng des cartes peut fuder avec ton jeu</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">15.</span>
+                        <span class="point-text">某些卡牌组合过于破坏游戏体验</span>
+                        <span class="point-volume">提及体量: 5条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>Flashlight &amp; Slow Bullets cards ruined the game. Game was good on release but now there are cards that actually temporarily blind you irl and make you have to look away from your monitor as well as cards that slow your bullets to the point of automatically losing the round.</li><li>劣迹子弹这张卡能存在就表明了这个游戏迟早要凉凉，射击游戏对枪射不中人，对枪比别人慢，那不是谁选到谁就赢，玩了近300个小时，从这张卡设计出来开始就一直被恶心到，玩家提的建议也当耳边风</li><li>Интересная механика карт. Генерируют забавные ситуации или руинят весь раунд(привет медленные пули из недавнего патча, чей мегамозг додумался до геймчейнджера уровня &quot;мы крутим карту, карта крутит вас на хуе&quot;</li><li>Overall balance: This will forever be a problem in the game since it&#x27;s very RNG at its core, it&#x27;s either hit or miss. Some cards are definitely more annoying than others, like a card sending you back to your spawn when you get hit once, or a card flat out slowing you down (as if the game wasn&#x27;t slow already lol).</li><li>Карты. В игре практически 200 уникальных карточек, которые влияют не только на ход игры, но и на самих персонажей. К примеру, карта добавляющая траву на поле боя, за которой удобно прятаться или красться. А как вам Карта, вынуждающая оружия игроков стрелять каждые 5 секунд? Звучит так же сломано, как оно есть на самом деле. Очень сложно забалансить такое количество изменяющихся условий. Так что, в игре может встречаться откровенно сломанная карта, так и откровенно бесполезная.</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                
+                <div class="point-item">
+                    <div class="point-header">
+                        <span class="point-number">16.</span>
+                        <span class="point-text">卡牌系统存在技术问题和BUG</span>
+                        <span class="point-volume">提及体量: 5条</span>
+                    </div>
+                    
+                    <div class="backup-comments">
+                        <strong>示例评论:</strong>
+                        <ul>
+                            <li>My player name didn&#x27;t take when I started the game, so I got a player rename card and used it. Logged back in and i got another generic player name. Wasted my rename card.</li><li>вся фишка с картами руинится благодаря кривому багоюзерскому исполнению</li><li>그 자판기 ? 돌리면 샤드 나 카드 뜨면 나말고 10초 동안 아무도 먹먹게해야함.. 그리고 샤드 ?</li><li>Muitas vezes a partida é encontrada e de repente você já está no mapa sem ter passado pela tela dos fragmentos de carta ou de escolha de personagem.</li><li>特别是偷窃精英这卡牌</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</body>
+</html>
