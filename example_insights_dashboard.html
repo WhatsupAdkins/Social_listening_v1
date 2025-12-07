@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>YouTube Video Comment Insights Analysis</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+            overflow: hidden;
+        }
+        
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+        
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 10px;
+            font-weight: 700;
+        }
+        
+        .header p {
+            font-size: 1.1em;
+            opacity: 0.9;
+        }
+        
+        .filters {
+            padding: 30px;
+            background: #f8f9fa;
+            border-bottom: 2px solid #e9ecef;
+            display: flex;
+            gap: 20px;
+            flex-wrap: wrap;
+            align-items: center;
+        }
+        
+        .filter-group {
+            display: flex;
+            flex-direction: column;
+            gap: 8px;
+        }
+        
+        .filter-group label {
+            font-weight: 600;
+            color: #495057;
+            font-size: 0.9em;
+        }
+        
+        .filter-group select {
+            padding: 10px 15px;
+            border: 2px solid #dee2e6;
+            border-radius: 8px;
+            font-size: 1em;
+            background: white;
+            cursor: pointer;
+            transition: all 0.3s;
+            min-width: 180px;
+        }
+        
+        .filter-group select:hover {
+            border-color: #667eea;
+        }
+        
+        .filter-group select:focus {
+            outline: none;
+            border-color: #667eea;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+        
+        .stats {
+            padding: 20px 30px;
+            background: white;
+            display: flex;
+            gap: 30px;
+            flex-wrap: wrap;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .chart-container {
+            padding: 30px;
+            background: white;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .chart-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        
+        .chart-wrapper {
+            position: relative;
+            height: 320px;
+            margin-top: 20px;
+            padding-left: 50px;
+        }
+        
+        .bar-chart {
+            display: flex;
+            align-items: flex-end;
+            gap: 20px;
+            height: 220px;
+            padding-right: 20px;
+            position: relative;
+        }
+        
+        .bar-group {
+            flex: 1;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            gap: 0;
+            min-width: 60px;
+            max-width: 120px;
+        }
+        
+        .bar-segments-container {
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
+            justify-content: flex-end;
+            height: 100%;
+            min-height: 200px;
+        }
+        
+        .bar-segment {
+            width: 100%;
+            border-radius: 2px;
+            transition: opacity 0.3s;
+            cursor: pointer;
+            position: relative;
+            min-height: 2px;
+        }
+        
+        .bar-segment:hover {
+            opacity: 0.8;
+        }
+        
+        .bar-segment-positive {
+            background: #4caf50;
+        }
+        
+        .bar-segment-negative {
+            background: #f44336;
+        }
+        
+        .bar-segment-neutral {
+            background: #ff9800;
+        }
+        
+        .bar-label {
+            margin-top: 10px;
+            font-size: 0.85em;
+            color: #495057;
+            text-align: center;
+            font-weight: 600;
+            word-break: break-word;
+            line-height: 1.2;
+        }
+        
+        .bar-count {
+            margin-top: 5px;
+            font-size: 0.75em;
+            color: #6c757d;
+            text-align: center;
+        }
+        
+        .chart-legend {
+            display: flex;
+            justify-content: center;
+            gap: 30px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+        
+        .legend-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+        
+        .legend-color {
+            width: 20px;
+            height: 20px;
+            border-radius: 4px;
+        }
+        
+        .legend-label {
+            font-size: 0.9em;
+            color: #495057;
+        }
+        
+        .y-axis {
+            position: absolute;
+            left: 0;
+            top: 0;
+            bottom: 100px;
+            width: 45px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            padding-right: 10px;
+            align-items: flex-end;
+            border-right: 1px solid #dee2e6;
+        }
+        
+        .y-axis-label {
+            font-size: 0.75em;
+            color: #6c757d;
+            line-height: 1;
+        }
+        
+        .stat-item {
+            display: flex;
+            flex-direction: column;
+            gap: 5px;
+        }
+        
+        .stat-value {
+            font-size: 2em;
+            font-weight: 700;
+            color: #667eea;
+        }
+        
+        .stat-label {
+            font-size: 0.9em;
+            color: #6c757d;
+        }
+        
+        .content {
+            padding: 30px;
+        }
+        
+        .tabs {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+            border-bottom: 2px solid #e9ecef;
+        }
+        
+        .tab {
+            padding: 15px 30px;
+            background: none;
+            border: none;
+            font-size: 1.1em;
+            font-weight: 600;
+            color: #6c757d;
+            cursor: pointer;
+            border-bottom: 3px solid transparent;
+            transition: all 0.3s;
+        }
+        
+        .tab:hover {
+            color: #667eea;
+        }
+        
+        .tab.active {
+            color: #667eea;
+            border-bottom-color: #667eea;
+        }
+        
+        .tab-content {
+            display: none;
+        }
+        
+        .tab-content.active {
+            display: block;
+        }
+        
+        .insights-grid {
+            display: grid;
+            gap: 25px;
+        }
+        
+        .insight-card {
+            background: white;
+            border: 2px solid #e9ecef;
+            border-radius: 12px;
+            padding: 25px;
+            transition: all 0.3s;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+        }
+        
+        .insight-card:hover {
+            border-color: #667eea;
+            box-shadow: 0 8px 24px rgba(102, 126, 234, 0.15);
+            transform: translateY(-2px);
+        }
+        
+        .insight-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: start;
+            margin-bottom: 15px;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+        
+        .insight-badges {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+        
+        .badge {
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-size: 0.85em;
+            font-weight: 600;
+            white-space: nowrap;
+        }
+        
+        .badge-module {
+            background: #e3f2fd;
+            color: #1976d2;
+        }
+        
+        .badge-sentiment-positive {
+            background: #e8f5e9;
+            color: #2e7d32;
+        }
+        
+        .badge-sentiment-negative {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .badge-sentiment-neutral {
+            background: #fff3e0;
+            color: #f57c00;
+        }
+        
+        .badge-importance-high {
+            background: #ffebee;
+            color: #c62828;
+        }
+        
+        .badge-importance-medium {
+            background: #fff9c4;
+            color: #f57f17;
+        }
+        
+        .badge-importance-low {
+            background: #e8f5e9;
+            color: #388e3c;
+        }
+        
+        .insight-text {
+            font-size: 1.1em;
+            line-height: 1.8;
+            color: #212529;
+            margin-bottom: 20px;
+        }
+        
+        .supporting-comments {
+            margin-top: 20px;
+            padding-top: 20px;
+            border-top: 2px solid #f1f3f5;
+        }
+        
+        .supporting-comments h4 {
+            font-size: 0.95em;
+            color: #6c757d;
+            margin-bottom: 15px;
+            font-weight: 600;
+        }
+        
+        .comment-item {
+            background: #f8f9fa;
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            border-left: 4px solid #667eea;
+            font-size: 0.95em;
+            line-height: 1.6;
+            color: #495057;
+        }
+        
+        .priority-theme-card {
+            background: linear-gradient(135deg, #f8f9fa 0%, #e9ecef 100%);
+            border: 2px solid #dee2e6;
+            border-radius: 12px;
+            padding: 25px;
+            margin-bottom: 25px;
+        }
+        
+        .priority-theme-title {
+            font-size: 1.3em;
+            font-weight: 700;
+            color: #212529;
+            margin-bottom: 15px;
+        }
+        
+        .priority-theme-why {
+            font-size: 1em;
+            line-height: 1.8;
+            color: #495057;
+            margin-bottom: 20px;
+        }
+        
+        .no-results {
+            text-align: center;
+            padding: 60px 20px;
+            color: #6c757d;
+        }
+        
+        .no-results-icon {
+            font-size: 4em;
+            margin-bottom: 20px;
+        }
+        
+        .reset-filters {
+            padding: 10px 20px;
+            background: #6c757d;
+            color: white;
+            border: none;
+            border-radius: 8px;
+            font-size: 1em;
+            cursor: pointer;
+            transition: all 0.3s;
+        }
+        
+        .reset-filters:hover {
+            background: #5a6268;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <div class="header">
+            <h1>YouTube Video Comment Insights Analysis</h1>
+            <p>October YouTube KOC comments (NyteFalli, PW Games, Belle Teke Harald, BnFire R6)</p>
+        </div>
+        
+        <div class="chart-container">
+            <div class="chart-title">📊 Sentiment Distribution by Theme (Comment Count)</div>
+            <div class="chart-wrapper">
+                <div class="y-axis" id="y-axis">
+                    <div class="y-axis-label">800</div>
+                    <div class="y-axis-label">600</div>
+                    <div class="y-axis-label">400</div>
+                    <div class="y-axis-label">200</div>
+                    <div class="y-axis-label">0</div>
+                </div>
+                <div class="bar-chart" id="bar-chart">
+                    <div class="bar-group">
+                        <div class="bar-segments-container">
+                            <div class="bar-segment bar-segment-negative" style="height: 15%;" title="Negative: 120 comments"></div>
+                            <div class="bar-segment bar-segment-neutral" style="height: 25%;" title="Neutral: 200 comments"></div>
+                            <div class="bar-segment bar-segment-positive" style="height: 60%;" title="Positive: 480 comments"></div>
+                        </div>
+                        <div class="bar-label">Gameplay</div>
+                        <div class="bar-count">800 comments</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-segments-container">
+                            <div class="bar-segment bar-segment-negative" style="height: 40%;" title="Negative: 200 comments"></div>
+                            <div class="bar-segment bar-segment-neutral" style="height: 20%;" title="Neutral: 100 comments"></div>
+                            <div class="bar-segment bar-segment-positive" style="height: 40%;" title="Positive: 200 comments"></div>
+                        </div>
+                        <div class="bar-label">Monetization</div>
+                        <div class="bar-count">500 comments</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-segments-container">
+                            <div class="bar-segment bar-segment-negative" style="height: 10%;" title="Negative: 30 comments"></div>
+                            <div class="bar-segment bar-segment-neutral" style="height: 30%;" title="Neutral: 90 comments"></div>
+                            <div class="bar-segment bar-segment-positive" style="height: 60%;" title="Positive: 180 comments"></div>
+                        </div>
+                        <div class="bar-label">Game Modes</div>
+                        <div class="bar-count">300 comments</div>
+                    </div>
+                    <div class="bar-group">
+                        <div class="bar-segments-container">
+                            <div class="bar-segment bar-segment-negative" style="height: 5%;" title="Negative: 15 comments"></div>
+                            <div class="bar-segment bar-segment-neutral" style="height: 25%;" title="Neutral: 75 comments"></div>
+                            <div class="bar-segment bar-segment-positive" style="height: 70%;" title="Positive: 210 comments"></div>
+                        </div>
+                        <div class="bar-label">Social & Community</div>
+                        <div class="bar-count">300 comments</div>
+                    </div>
+                </div>
+            </div>
+            <div class="chart-legend">
+                <div class="legend-item">
+                    <div class="legend-color bar-segment-positive"></div>
+                    <span class="legend-label">Positive</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-segment-neutral"></div>
+                    <span class="legend-label">Neutral</span>
+                </div>
+                <div class="legend-item">
+                    <div class="legend-color bar-segment-negative"></div>
+                    <span class="legend-label">Negative</span>
+                </div>
+            </div>
+        </div>
+        
+        <div class="filters">
+            <div class="filter-group">
+                <label>📊 Theme (Module)</label>
+                <select id="filter-module">
+                    <option value="all">All Themes</option>
+                    <option value="Gameplay">Gameplay</option>
+                    <option value="Monetization">Monetization</option>
+                    <option value="Game Modes">Game Modes</option>
+                    <option value="Social & Community">Social & Community</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>😊 Sentiment</label>
+                <select id="filter-sentiment">
+                    <option value="all">All Sentiments</option>
+                    <option value="Positive">Positive</option>
+                    <option value="Negative">Negative</option>
+                    <option value="Neutral">Neutral</option>
+                </select>
+            </div>
+            
+            <div class="filter-group">
+                <label>⭐ Priority (Importance)</label>
+                <select id="filter-priority">
+                    <option value="all">All Priorities</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
+            </div>
+            
+            <button class="reset-filters" onclick="resetFilters()">Reset Filters</button>
+        </div>
+        
+        <div class="stats">
+            <div class="stat-item">
+                <div class="stat-value" id="stat-total-insights">24</div>
+                <div class="stat-label">Total Insights</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="stat-total-themes">8</div>
+                <div class="stat-label">Priority Themes</div>
+            </div>
+            <div class="stat-item">
+                <div class="stat-value" id="stat-high-priority">12</div>
+                <div class="stat-label">High Priority</div>
+            </div>
+        </div>
+        
+        <div class="content">
+            <div class="tabs">
+                <button class="tab active" onclick="switchTab('insights')">Key Insights</button>
+                <button class="tab" onclick="switchTab('themes')">Priority Themes</button>
+            </div>
+            
+            <div id="tab-insights" class="tab-content active">
+                <div class="insights-grid" id="insights-container">
+                    <!-- Insights will be inserted here -->
+                </div>
+            </div>
+            
+            <div id="tab-themes" class="tab-content">
+                <div class="insights-grid" id="themes-container">
+                    <!-- Priority themes will be inserted here -->
+                </div>
+            </div>
+        </div>
+    </div>
+    
+    <script>
+        // Sample data
+        const insightsData = [
+            {
+                "module": "Gameplay",
+                "sentiment": "Positive",
+                "importance": "High",
+                "insight": "Players recognize the card system as the core differentiator that sets the game apart from other hero shooters. The unique shard card mechanic creates highly variable gameplay experiences with different card combinations each round, distinguishing it from traditional FPS games and adding strategic depth.",
+                "supporting_comments": [
+                    "FragPunk is NOT a bad game, it's got a unique and addicting hook with the shard cards and the 5v5 SND style gameplay makes it more engaging for me.",
+                    "The cards make every round different and make you adopt different strategies. This game is solid.",
+                    "I beg to differ. People are forgetting that the 19 new shard cards they've added, will likely drastically change the strategies players use in each game."
+                ],
+                "group_key": "Gameplay|Positive"
+            },
+            {
+                "module": "Gameplay",
+                "sentiment": "Positive",
+                "importance": "High",
+                "insight": "Players show extremely high engagement and investment, with some core players accumulating significant playtime (e.g., 90 hours in 3 weeks, 300+ hours) and expressing strong daily play intentions. This deep engagement indicates the game has successfully built a core player base, though they also express concerns about player base size and long-term viability.",
+                "supporting_comments": [
+                    "I have over 300+ hours in this game and I want to play it every single day still.",
+                    "I got this game 3 weeks ago and have 90 hours on it",
+                    "This has become my go to game currently I hope it catches on stays around for years to come"
+                ],
+                "group_key": "Gameplay|Positive"
+            },
+            {
+                "module": "Monetization",
+                "sentiment": "Positive",
+                "importance": "High",
+                "insight": "The battle pass is considered essentially free because it costs 900 coins and returns 900 coins upon completion. Players can also use limited-time event coins to purchase the pass and receive regular coins. This mechanism has received high recognition and praise for developer generosity.",
+                "supporting_comments": [
+                    "From a financial perspective, the Premium Battle Pass is free - it costs 900 coins and you get 900 coins back if you finish it",
+                    "Premium Battle Pass is basically free. And as an added bonus, you can buy it with limited-time Frag Coins and get back regular Frag Coins.",
+                    "good thing i have coins from the event cause im getting the ultimate one"
+                ],
+                "group_key": "Monetization|Positive"
+            },
+            {
+                "module": "Game Modes",
+                "sentiment": "Negative",
+                "importance": "High",
+                "insight": "The game faces a critical player base crisis with player count dropping from 100k to 2-3k. Ranked mode queues take 30 minutes to 1 hour with no matches, directly causing a vicious cycle of player attrition. If this trend cannot be reversed in the short term, the game faces closure risk.",
+                "supporting_comments": [
+                    "When i search game for Rank, i que up to 30min with no games 😭 no people playing fragpunk?",
+                    "I've have been in queue for an hour while others my rank get matched before me.",
+                    "Dead unfortunately around 2k"
+                ],
+                "group_key": "Game Modes|Negative"
+            },
+            {
+                "module": "Game Modes",
+                "sentiment": "Neutral",
+                "importance": "High",
+                "insight": "PvE mode has significant solo playability issues. Players encounter extreme difficulty in solo mode, especially when jumping from survival to nightmare difficulty. Multiple players report that solo mode requires extremely optimized builds to complete, and certain levels (like 1-2, 4-2) are nearly impossible in solo mode.",
+                "supporting_comments": [
+                    "I did the nightmare mode 1-1 solo with Nitro Pew Pew kill gate and buff for them, as well as ice slowdown. However, I could not manage 1-2 solo so I grouped up",
+                    "Trying to do these levels without taking any core damage solo is gonna be near impossible I think, especially on Survival and Nightmare",
+                    "The jump survival->nightmare is insane though"
+                ],
+                "group_key": "Game Modes|Neutral"
+            },
+            {
+                "module": "Social & Community",
+                "sentiment": "Positive",
+                "importance": "Medium",
+                "insight": "Content creators (especially NyteFall) play a key role in the community, with players highly dependent on and appreciative of high-quality game content and tutorial videos. Players explicitly state they discovered the game and learned game mechanics through content creators.",
+                "supporting_comments": [
+                    "You're literally putting out the best FragPunk content and I'm a huge fan of the videos.",
+                    "I asked the subreddit for any recommendations for YouTubers that cover the game deeply and they recommend you",
+                    "thank you for covering this game, truly appreciate it as a Fragpunk fan, your content is awesome!"
+                ],
+                "group_key": "Social & Community|Positive"
+            }
+        ];
+        
+        const themesData = [
+            {
+                "module": "Gameplay",
+                "sentiment": "Positive",
+                "theme_name": "Card System as Core Differentiator",
+                "why_important": "The card system is the unique selling point that sets the game apart from competitors. Players explicitly state this is what keeps them engaged and coming back. This is the game's primary competitive advantage and should be protected and enhanced.",
+                "supporting_comments": [
+                    "The card system is the only unique quality about this game nothing else is original.",
+                    "FragPunk brings a unique twist to the genre with its inventive Shard Card system",
+                    "The shard cards make it different from other hero shooters"
+                ],
+                "group_key": "Gameplay|Positive"
+            },
+            {
+                "module": "Game Modes",
+                "sentiment": "Negative",
+                "theme_name": "Player Base Crisis and Matchmaking System Collapse",
+                "why_important": "This is the most fundamental survival issue. Player count dropping from 100k to 2-3k, ranked queues taking 30 minutes to 1 hour with no matches directly causes a vicious cycle of player attrition. If this trend cannot be reversed in the short term, the game faces closure risk.",
+                "supporting_comments": [
+                    "When i search game for Rank, i que up to 30min with no games 😭",
+                    "I've have been in queue for an hour while others my rank get matched before me.",
+                    "Dead unfortunately around 2k"
+                ],
+                "group_key": "Game Modes|Negative"
+            },
+            {
+                "module": "Monetization",
+                "sentiment": "Positive",
+                "theme_name": "Battle Pass Value Perception",
+                "why_important": "The battle pass being essentially free (900 coins cost, 900 coins return) has created extremely positive player sentiment and trust. This generous monetization strategy has built good reputation among players and becomes a competitive advantage when compared to other FPS games.",
+                "supporting_comments": [
+                    "From a financial perspective, the Premium Battle Pass is free",
+                    "Premium Battle Pass is basically free. And as an added bonus, you can buy it with limited-time Frag Coins",
+                    "this game battlepass has better bp than other game"
+                ],
+                "group_key": "Monetization|Positive"
+            },
+            {
+                "module": "Game Modes",
+                "sentiment": "Neutral",
+                "theme_name": "PvE Mode Balance Issues",
+                "why_important": "PvE mode balance problems (boss health anomalies, one-shot enemies, impossible to complete on easy difficulty) cause player frustration and anger, missing the key opportunity to win back players through new content, instead exacerbating negative reviews.",
+                "supporting_comments": [
+                    "THOSE CARBOARD TURRETS WITH THAT LONG GUN ON THEIR HAND IS REALLY A PAIN THEY ALMOST ONE SHOT",
+                    "Currently stuck on the 1-6 pinball boss I'm playing it duo on the easiest mode",
+                    "Yeah this is NOT playable solo. Got to 3-3 on easiest difficulty and this is just borderline insane."
+                ],
+                "group_key": "Game Modes|Neutral"
+            }
+        ];
+        
+        // Current filters
+        let currentFilters = {
+            module: 'all',
+            sentiment: 'all',
+            priority: 'all'
+        };
+        
+        // Current tab
+        let currentTab = 'insights';
+        
+        // Filter functions
+        function filterData() {
+            let moduleFilter = document.getElementById('filter-module').value;
+            let sentimentFilter = document.getElementById('filter-sentiment').value;
+            let priorityFilter = document.getElementById('filter-priority').value;
+            
+            currentFilters = {
+                module: moduleFilter,
+                sentiment: sentimentFilter,
+                priority: priorityFilter
+            };
+            
+            renderContent();
+            updateStats();
+        }
+        
+        function resetFilters() {
+            document.getElementById('filter-module').value = 'all';
+            document.getElementById('filter-sentiment').value = 'all';
+            document.getElementById('filter-priority').value = 'all';
+            filterData();
+        }
+        
+        function switchTab(tabName) {
+            currentTab = tabName;
+            
+            // Update tab buttons
+            document.querySelectorAll('.tab').forEach(tab => {
+                tab.classList.remove('active');
+            });
+            event.target.classList.add('active');
+            
+            // Update tab content
+            document.querySelectorAll('.tab-content').forEach(content => {
+                content.classList.remove('active');
+            });
+            document.getElementById(`tab-${tabName}`).classList.add('active');
+            
+            renderContent();
+        }
+        
+        function renderContent() {
+            if (currentTab === 'insights') {
+                renderInsights();
+            } else {
+                renderThemes();
+            }
+        }
+        
+        function renderInsights() {
+            const container = document.getElementById('insights-container');
+            const filtered = insightsData.filter(item => {
+                if (currentFilters.module !== 'all') {
+                    if (item.module !== currentFilters.module) return false;
+                }
+                if (currentFilters.sentiment !== 'all') {
+                    if (item.sentiment !== currentFilters.sentiment) return false;
+                }
+                if (currentFilters.priority !== 'all') {
+                    if (item.importance !== currentFilters.priority) return false;
+                }
+                return true;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No matching insights found</h3>
+                        <p>Please try adjusting your filter conditions</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(item => {
+                let importanceClass = 'badge-importance-medium';
+                if (item.importance === 'High') {
+                    importanceClass = 'badge-importance-high';
+                } else if (item.importance === 'Low') {
+                    importanceClass = 'badge-importance-low';
+                }
+                
+                let sentimentClass = 'badge-sentiment-neutral';
+                if (item.sentiment === 'Positive') {
+                    sentimentClass = 'badge-sentiment-positive';
+                } else if (item.sentiment === 'Negative') {
+                    sentimentClass = 'badge-sentiment-negative';
+                }
+                
+                const commentsHtml = item.supporting_comments.map(comment => 
+                    `<div class="comment-item">${escapeHtml(comment)}</div>`
+                ).join('');
+                
+                return `
+                    <div class="insight-card">
+                        <div class="insight-header">
+                            <div class="insight-badges">
+                                <span class="badge badge-module">${item.module}</span>
+                                <span class="badge ${sentimentClass}">${item.sentiment}</span>
+                                <span class="badge ${importanceClass}">${item.importance}</span>
+                            </div>
+                        </div>
+                        <div class="insight-text">${escapeHtml(item.insight)}</div>
+                        ${item.supporting_comments && item.supporting_comments.length > 0 ? `
+                        <div class="supporting-comments">
+                            <h4>📝 Supporting Comments (${item.supporting_comments.length})</h4>
+                            ${commentsHtml}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function renderThemes() {
+            const container = document.getElementById('themes-container');
+            const filtered = themesData.filter(item => {
+                if (currentFilters.module !== 'all') {
+                    if (item.module !== currentFilters.module) return false;
+                }
+                if (currentFilters.sentiment !== 'all') {
+                    if (item.sentiment !== currentFilters.sentiment) return false;
+                }
+                return true;
+            });
+            
+            if (filtered.length === 0) {
+                container.innerHTML = `
+                    <div class="no-results">
+                        <div class="no-results-icon">🔍</div>
+                        <h3>No matching themes found</h3>
+                        <p>Please try adjusting your filter conditions</p>
+                    </div>
+                `;
+                return;
+            }
+            
+            container.innerHTML = filtered.map(item => {
+                let sentimentClass = 'badge-sentiment-neutral';
+                if (item.sentiment === 'Positive') {
+                    sentimentClass = 'badge-sentiment-positive';
+                } else if (item.sentiment === 'Negative') {
+                    sentimentClass = 'badge-sentiment-negative';
+                }
+                
+                const commentsHtml = item.supporting_comments.map(comment => 
+                    `<div class="comment-item">${escapeHtml(comment)}</div>`
+                ).join('');
+                
+                return `
+                    <div class="priority-theme-card">
+                        <div class="insight-header">
+                            <div class="insight-badges">
+                                <span class="badge badge-module">${item.module}</span>
+                                <span class="badge ${sentimentClass}">${item.sentiment}</span>
+                            </div>
+                        </div>
+                        <div class="priority-theme-title">${escapeHtml(item.theme_name)}</div>
+                        <div class="priority-theme-why">${escapeHtml(item.why_important)}</div>
+                        ${item.supporting_comments && item.supporting_comments.length > 0 ? `
+                        <div class="supporting-comments">
+                            <h4>📝 Supporting Comments (${item.supporting_comments.length})</h4>
+                            ${commentsHtml}
+                        </div>
+                        ` : ''}
+                    </div>
+                `;
+            }).join('');
+        }
+        
+        function updateStats() {
+            const filtered = insightsData.filter(item => {
+                if (currentFilters.module !== 'all') {
+                    if (item.module !== currentFilters.module) return false;
+                }
+                if (currentFilters.sentiment !== 'all') {
+                    if (item.sentiment !== currentFilters.sentiment) return false;
+                }
+                if (currentFilters.priority !== 'all') {
+                    if (item.importance !== currentFilters.priority) return false;
+                }
+                return true;
+            });
+            
+            const filteredThemes = themesData.filter(item => {
+                if (currentFilters.module !== 'all') {
+                    if (item.module !== currentFilters.module) return false;
+                }
+                if (currentFilters.sentiment !== 'all') {
+                    if (item.sentiment !== currentFilters.sentiment) return false;
+                }
+                return true;
+            });
+            
+            document.getElementById('stat-total-insights').textContent = filtered.length;
+            document.getElementById('stat-total-themes').textContent = filteredThemes.length;
+            const highPriorityCount = filtered.filter(item => item.importance === 'High').length;
+            document.getElementById('stat-high-priority').textContent = highPriorityCount;
+        }
+        
+        function escapeHtml(text) {
+            const div = document.createElement('div');
+            div.textContent = text;
+            return div.innerHTML;
+        }
+        
+        // Initialize
+        document.getElementById('filter-module').addEventListener('change', filterData);
+        document.getElementById('filter-sentiment').addEventListener('change', filterData);
+        document.getElementById('filter-priority').addEventListener('change', filterData);
+        
+        // Initial render
+        renderContent();
+        updateStats();
+    </script>
+</body>
+</html>
+

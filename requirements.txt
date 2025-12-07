@@ -1,0 +1,31 @@
+# Core dependencies
+pandas>=1.5.0
+numpy>=1.23.0
+
+# AI/ML APIs
+anthropic>=0.18.0
+openai>=1.0.0
+tiktoken>=0.5.0
+
+# Data processing
+python-docx>=0.8.11
+pyyaml>=6.0
+tqdm>=4.65.0
+
+# Visualization
+plotly>=5.17.0
+
+# Standard library modules used (no installation needed):
+# - pathlib
+# - datetime
+# - json
+# - os
+# - re
+# - html
+# - collections
+# - time
+# - typing
+# - glob
+# - csv
+# - pickle
+
