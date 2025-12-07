@@ -32,7 +32,6 @@ This repository contains Python scripts for analyzing game comments from various
 ├── LICENSE                # MIT License
 └── .gitignore            # Git ignore rules
 ```
->>>>>>> f79c625 (Reorganize repository structure: add src/, examples/, and docs/ folders)
 
 ## Scripts Overview
 
